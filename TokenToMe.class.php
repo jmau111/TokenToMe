@@ -15,7 +15,10 @@ if( ! class_exists('TokenToMe') ) {
 			
 		}
 
-
+		/*
+		* Get access token from Twitter API 1.1
+		* returns $access_token
+		*/
 		public function get_access_token()
 		{
 

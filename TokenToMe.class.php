@@ -25,7 +25,7 @@ if( ! class_exists('TokenToMe') ) {
 
 			$params = array(
 				'method' 		=> 'POST',
-				'httpversion' 	=> '1.1',
+				'httpversion'	=> '1.1',
 				'blocking' 		=> true,
 				'headers' 		=> array(
 					'Authorization' => 'Basic ' . $auth,

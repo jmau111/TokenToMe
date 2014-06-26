@@ -41,9 +41,9 @@ if( ! class_exists('TokenToMe') ) {
 			$call 	  = wp_remote_retrieve_body( wp_remote_post('https://api.twitter.com/oauth2/token', $params) );
 			$keys     = json_decode($call);
 
-			if( $keys && !is_null( $keys ) ) $access_token = $keys->access_token;
-
-			return $access_token;
+			$access_token = ( $keys && !is_null( $keys ) ) ? $keys->access_token : 'The Twitter API said no !';
+			
+			return  $access_token
 			
 		}
 

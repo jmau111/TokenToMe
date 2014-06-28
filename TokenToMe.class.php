@@ -13,15 +13,16 @@ if (!class_exists('TokenToMe'))
 
 		{
 		public $consumer_key;
-
 		protected $consumer_secret;
 		public $screen_name;
+		public $request;
 
-		public function __construct($consumer_key = false, $consumer_secret = false, $screen_name = 'TweetPressFr')
+		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $screen_name = 'TweetPressFr')
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
 			$this->screen_name = $screen_name;
+			$this->request = $request;
 			if (!$consumer_key || !$consumer_secret) return;
 			}
 
@@ -58,7 +59,7 @@ if (!class_exists('TokenToMe'))
 		* Get infos for user from Twitter API 1.1 with the $access_token
 		* returns (object) $infos from Twitter
 		*/
-		public function get_infos()
+		public function get_obj()
 			{
 			$args = array(
 				'httpversion' => '1.1',
@@ -67,7 +68,7 @@ if (!class_exists('TokenToMe'))
 					'Authorization' => "Bearer {$this->get_access_token() }"
 				)
 			);
-			$q = "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
+			$q = "https://api.twitter.com/1.1/{$this->request}.json?screen_name={$this->screen_name}";
 			$call = wp_remote_get($q, $args);
 			$infos = json_decode(wp_remote_retrieve_body($call), true); //associative array
 			return $infos;

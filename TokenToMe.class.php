@@ -24,7 +24,7 @@ if( ! class_exists('TokenToMe') ) {
 			
 			
 			if( !$consumer_key || !$consumer_secret ) 
-				return;
+			return;
 			
 		}
 
@@ -40,15 +40,15 @@ if( ! class_exists('TokenToMe') ) {
 
 
 			$params = array(
-				'method' 		=> 'POST',
-				'httpversion'	=> '1.1',
-				'blocking' 		=> true,
-				'headers' 		=> array(
-					'Authorization' => 'Basic ' . $auth,
-					'Content-Type' 	=> 'application/x-www-form-urlencoded;charset=UTF-8'// !important
-				),
-				
-				'body' 			=> array( 'grant_type' => 'client_credentials' )
+			'method' 		=> 'POST',
+			'httpversion'	=> '1.1',
+			'blocking' 		=> true,
+			'headers' 		=> array(
+			'Authorization' => 'Basic ' . $auth,
+			'Content-Type' 	=> 'application/x-www-form-urlencoded;charset=UTF-8'// !important
+			),
+			
+			'body' 			=> array( 'grant_type' => 'client_credentials' )
 			);
 
 			$call 	  = wp_remote_retrieve_body( wp_remote_post('https://api.twitter.com/oauth2/token', $params) );
@@ -66,15 +66,15 @@ if( ! class_exists('TokenToMe') ) {
 		*/
 		
 		public function get_infos() {
-		
+			
 			$args = array(
-				'httpversion' 	=> '1.1',
-				'blocking' 		=> true,
-				'headers' 		=> array(
-					'Authorization' => "Bearer {$this->get_access_token()}"
-				)
+			'httpversion' 	=> '1.1',
+			'blocking' 		=> true,
+			'headers' 		=> array(
+			'Authorization' => "Bearer {$this->get_access_token()}"
+			)
 			);
-	 
+			
 
 			$q		= "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
 			$call	= wp_remote_retrieve_body( wp_remote_get($q, $args) );
@@ -82,7 +82,7 @@ if( ! class_exists('TokenToMe') ) {
 			$infos	= json_decode($call);
 			
 			return var_dump($infos);
-		
+			
 		}
 		
 

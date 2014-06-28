@@ -17,9 +17,7 @@ if (!class_exists('TokenToMe'))
 		protected $consumer_secret;
 		public $screen_name;
 
-		public
-
-		function __construct($consumer_key = false, $consumer_secret = false, $screen_name = 'TweetPressFr')
+		public function __construct($consumer_key = false, $consumer_secret = false, $screen_name = 'TweetPressFr')
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
@@ -31,9 +29,7 @@ if (!class_exists('TokenToMe'))
 		* Get access token from Twitter API 1.1
 		* returns $access_token
 		*/
-		public
-
-		function get_access_token()
+		public function get_access_token()
 			{
 			$credentials = $this->consumer_key . ':' . $this->consumer_secret;
 			$auth = base64_encode($credentials);
@@ -52,8 +48,8 @@ if (!class_exists('TokenToMe'))
 					'grant_type' => 'client_credentials'
 				)
 			);
-			$call = wp_remote_retrieve_body(wp_remote_post('https://api.twitter.com/oauth2/token', $params));
-			$keys = json_decode($call);
+			$call = wp_remote_post('https://api.twitter.com/oauth2/token', $params);
+			$keys = json_decode(wp_remote_retrieve_body($call));
 			$access_token = (property_exists($keys, 'access_token')) ? $keys->access_token : 'The Twitter API said no !';
 			return $access_token;
 			}
@@ -62,9 +58,7 @@ if (!class_exists('TokenToMe'))
 		* Get infos for user from Twitter API 1.1 with the $access_token
 		* returns (object) $infos from Twitter
 		*/
-		public
-
-		function get_infos()
+		public function get_infos()
 			{
 			$args = array(
 				'httpversion' => '1.1',
@@ -74,8 +68,8 @@ if (!class_exists('TokenToMe'))
 				)
 			);
 			$q = "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
-			$call = wp_remote_retrieve_body(wp_remote_get($q, $args));
-			$infos = json_decode($call, true); //associative array
+			$call = wp_remote_get($q, $args);
+			$infos = json_decode(wp_remote_retrieve_body($call), true); //associative array
 			return var_dump($infos);
 			}
 		}

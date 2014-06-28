@@ -6,12 +6,18 @@ if( ! class_exists('TokenToMe') ) {
 
 		public $consumer_key;
 		protected $consumer_secret;
+		public $screen_name;
 
-		public function __construct( $consumer_key, $consumer_secret ) 
+		public function __construct( $consumer_key = false, $consumer_secret = false, $screen_name = 'TweetPressFr' ) 
 		{
 
 			$this->consumer_key 	= $consumer_key;
 			$this->consumer_secret  = $consumer_secret;
+			$this->screen_name		= $screen_name;
+			
+			
+			if( !$consumer_key || !$consumer_secret ) 
+				return;
 			
 		}
 
@@ -43,9 +49,35 @@ if( ! class_exists('TokenToMe') ) {
 
 			$access_token = ( $keys && !is_null( $keys ) ) ? $keys->access_token : 'The Twitter API said no !';
 			
-			return  $access_token
+			return $access_token;
 			
 		}
+		
+		/*
+		* Get infos for user from Twitter API 1.1 with the $access_token
+		* returns (object) $infos from Twitter
+		*/
+		
+		public function get_infos() {
+		
+			$args = array(
+				'httpversion' => '1.1',
+				'blocking' => true,
+				'headers' => array(
+					'Authorization' => "Bearer {$this->get_access_token()}"
+				)
+			);
+	 
+
+			$q	 	= "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
+			$call	= wp_remote_retrieve_body( wp_remote_get($q, $args) );
+			
+			$infos	= json_decode($call);
+			
+			return var_dump($infos);
+		
+		}
+		
 
 	}
 }

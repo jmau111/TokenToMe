@@ -68,15 +68,15 @@ if( ! class_exists('TokenToMe') ) {
 		public function get_infos() {
 		
 			$args = array(
-				'httpversion' => '1.1',
-				'blocking' => true,
-				'headers' => array(
+				'httpversion' 	=> '1.1',
+				'blocking' 		=> true,
+				'headers' 		=> array(
 					'Authorization' => "Bearer {$this->get_access_token()}"
 				)
 			);
 	 
 
-			$q	 	= "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
+			$q		= "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
 			$call	= wp_remote_retrieve_body( wp_remote_get($q, $args) );
 			
 			$infos	= json_decode($call);

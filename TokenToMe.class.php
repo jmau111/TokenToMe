@@ -70,7 +70,7 @@ if (!class_exists('TokenToMe'))
 			$q = "https://api.twitter.com/1.1/users/show.json?screen_name={$this->screen_name}";
 			$call = wp_remote_get($q, $args);
 			$infos = json_decode(wp_remote_retrieve_body($call), true); //associative array
-			return var_dump($infos);
+			return $infos;
 			}
 		}
 	}

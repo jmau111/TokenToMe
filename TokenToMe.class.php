@@ -1,4 +1,11 @@
 <?php
+/*
+Plugin Name: TokenToMe
+Description: Get access token from Twitter 
+Author: Julien Maury
+Author URI: https://tweetpressfr.github.io
+Version 1.1
+*/
 
 if( ! class_exists('TokenToMe') ) {	
 	

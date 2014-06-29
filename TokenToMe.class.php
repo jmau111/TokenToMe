@@ -16,14 +16,18 @@ if (!class_exists('TokenToMe'))
 		protected $consumer_secret;
 		public $screen_name;
 		public $request;
+		public $params = array();
 
-		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $screen_name = 'TweetPressFr')
+		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $screen_name = 'TweetPressFr')
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
 			$this->screen_name = $screen_name;
 			$this->request = $request;
-			if (!$consumer_key || !$consumer_secret) return;
+			$this->params = $params;
+			
+			if (!$consumer_key || !$consumer_secret) 
+				return;
 			}
 
 		/*
@@ -34,7 +38,7 @@ if (!class_exists('TokenToMe'))
 			{
 			$credentials = $this->consumer_key . ':' . $this->consumer_secret;
 			$auth = base64_encode($credentials);
-			$params = array(
+			$args = array(
 				'method' => 'POST',
 				'httpversion' => '1.1',
 				'blocking' => true,
@@ -49,7 +53,7 @@ if (!class_exists('TokenToMe'))
 					'grant_type' => 'client_credentials'
 				)
 			);
-			$call = wp_remote_post('https://api.twitter.com/oauth2/token', $params);
+			$call = wp_remote_post('https://api.twitter.com/oauth2/token', $args);
 			$keys = json_decode(wp_remote_retrieve_body($call));
 			$access_token = (property_exists($keys, 'access_token')) ? $keys->access_token : 'The Twitter API said no !';
 			return $access_token;
@@ -61,6 +65,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		public function get_obj()
 			{
+
 			$args = array(
 				'httpversion' => '1.1',
 				'blocking' => true,
@@ -68,8 +73,16 @@ if (!class_exists('TokenToMe'))
 					'Authorization' => "Bearer {$this->get_access_token() }"
 				)
 			);
-			$q = "https://api.twitter.com/1.1/{$this->request}.json?screen_name={$this->screen_name}";
-			$call = wp_remote_get($q, $args);
+			
+			$defaults = array(
+				'screen_name' => $this->screen_name
+			);
+			
+			$q = "https://api.twitter.com/1.1/{$this->request}.json";
+			$sets = wp_parse_args( $this->params, $defaults );
+			$query = add_query_arg( $sets, $q);
+			
+			$call = wp_remote_get($query, $args);
 			$infos = json_decode(wp_remote_retrieve_body($call), true); //associative array
 			return $infos;
 			}

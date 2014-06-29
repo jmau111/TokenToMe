@@ -106,7 +106,7 @@ if (!class_exists('TokenToMe'))
 					$this->get_obj();
 					$cached = ob_get_contents();
 					ob_end_clean();
-					set_site_transient($this->screen_name.'_ttm_transient', $infos, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+					set_site_transient($this->screen_name.'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 					}
 					
 					return $cached;

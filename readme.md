@@ -1,6 +1,6 @@
 # TokenToMe #
 
-Get access toke and more from Twitter (in WordPress)
+Get access token and more from Twitter (in WordPress)
 
 ## Requirements ##
 

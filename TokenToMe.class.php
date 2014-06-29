@@ -91,32 +91,32 @@ if (!class_exists('TokenToMe'))
 			return $obj;
 			}
 			
-			/*
-			* Get infos but make sure there's some cache
-			* returns (object) $infos from Twitter
-			*/
-			public function get_infos()
-				{
-				
-				$cached = get_site_transient($this->screen_name.'_ttm_transient');
-				
-				if( false === $cached ) 
-					{
-					$cached = $this->get_obj();
-					set_site_transient($this->screen_name.'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
-					}
-					
-				return $cached;
-				}
+		/*
+		* Get infos but make sure there's some cache
+		* returns (object) $infos from Twitter
+		*/
+		public function get_infos()
+			{
 			
-			/*
-			* Delete cache
-			* In case you need to delete transient
-			*/
-			protected function delete_cache()
+			$cached = get_site_transient($this->screen_name.'_ttm_transient');
+			
+			if( false === $cached ) 
 				{
-					delete_site_transient($this->screen_name.'_ttm_transient');
+				$cached = $this->get_obj();
+				set_site_transient($this->screen_name.'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
+			return $cached;
+			}
+		
+		/*
+		* Delete cache
+		* In case you need to delete transient
+		*/
+		protected function delete_cache()
+			{
+				delete_site_transient($this->screen_name.'_ttm_transient');
+			}
+			
 		}
 	}

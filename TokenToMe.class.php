@@ -65,7 +65,7 @@ if (!class_exists('TokenToMe'))
 		* Get object from Twitter API 1.1 with the $access_token
 		* returns $obj from Twitter
 		*/
-		public function get_obj()
+		protected function get_obj()
 			{
 
 			$args = array(

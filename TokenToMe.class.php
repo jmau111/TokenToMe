@@ -28,7 +28,7 @@ if (!class_exists('TokenToMe'))
 			$this->params = $params;
 			$this->cache = $cache;
 			
-			if (!$consumer_key || !$consumer_secret) 
+			if (!$consumer_key || !$consumer_secret || $cache < 900) 
 				return;
 			}
 

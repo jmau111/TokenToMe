@@ -116,7 +116,7 @@ if (!class_exists('TokenToMe'))
 			* Delete cache
 			* In case you need to delete transient
 			*/
-			private function delete_cache()
+			protected function delete_cache()
 				{
 					delete_site_transient($this->screen_name.'_ttm_transient');
 				}

@@ -17,14 +17,16 @@ if (!class_exists('TokenToMe'))
 		public $screen_name;
 		public $request;
 		public $params = array();
+		public $cache;
 
-		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $screen_name = 'TweetPressFr')
+		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $screen_name = 'TweetPressFr', $cache = 900)
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
 			$this->screen_name = $screen_name;
 			$this->request = $request;
 			$this->params = $params;
+			$this->cache = $cache;
 			
 			if (!$consumer_key || !$consumer_secret) 
 				return;
@@ -60,8 +62,8 @@ if (!class_exists('TokenToMe'))
 			}
 
 		/*
-		* Get infos for user from Twitter API 1.1 with the $access_token
-		* returns (object) $infos from Twitter
+		* Get object from Twitter API 1.1 with the $access_token
+		* returns $obj from Twitter
 		*/
 		public function get_obj()
 			{
@@ -83,8 +85,40 @@ if (!class_exists('TokenToMe'))
 			$query = add_query_arg( $sets, $q);
 			
 			$call = wp_remote_get($query, $args);
-			$infos = json_decode(wp_remote_retrieve_body($call), true); //associative array
-			return $infos;
+			$obj = json_decode(wp_remote_retrieve_body($call), true); //associative array
+
+			
+			return $obj;
 			}
+			
+			/*
+			* Get infos but make sure there's some cache
+			* returns (object) $infos from Twitter
+			*/
+			public function get_infos()
+				{
+				
+				$cached = get_site_transient($this->screen_name.'_ttm_transient');
+				
+				if( false === $cached ) 
+					{
+					ob_start();
+					$this->get_obj();
+					$cached = ob_get_contents();
+					ob_end_clean();
+					set_site_transient($this->screen_name.'_ttm_transient', $infos, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+					}
+					
+					return $cached;
+				}
+			
+			/*
+			* Delete cache
+			* In case you need to delete transient
+			*/
+			private function delete_cache()
+				{
+					delete_site_transient($this->screen_name.'_ttm_transient');
+				}
 		}
 	}

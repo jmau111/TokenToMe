@@ -36,14 +36,13 @@ if (!class_exists('TokenToMe'))
 		* Get access token from Twitter API 1.1
 		* returns $access_token
 		*/
-		public function get_access_token()
+		protected function get_access_token()
 			{
 			$credentials = $this->consumer_key . ':' . $this->consumer_secret;
 			$auth = base64_encode($credentials);
 			$args = array(
 				'method' => 'POST',
 				'httpversion' => '1.1',
-				'blocking' => true,
 				'headers' => array(
 					'Authorization' => 'Basic ' . $auth,
 					'Content-Type' => 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -70,7 +69,6 @@ if (!class_exists('TokenToMe'))
 
 			$args = array(
 				'httpversion' => '1.1',
-				'blocking' => true,
 				'headers' => array(
 					'Authorization' => "Bearer {$this->get_access_token() }"
 				)

@@ -31,6 +31,7 @@ if (!class_exists('TokenToMe'))
 			
 			if (!$consumer_key || !$consumer_secret || $cache < 900) 
 				return;
+			
 			}
 
 		/*
@@ -125,7 +126,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function get_obj()
 			{
-			
+			$this->get_access_token();
 			$access_token = get_option( md5($this->consumer_key.$this->consumer_secret ).'_twitter_access_token');
 
 			$args = array(
@@ -166,13 +167,12 @@ if (!class_exists('TokenToMe'))
 		*/
 		public function get_infos()
 			{
-			
-			$cached = get_site_transient(substr(md5($this->request.''.$this->screen_name), 0, 10).'_ttm_transient');
+			$cached = get_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient');
 			
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
-				set_site_transient(substr(md5($this->request.''.$this->screen_name), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
 			return $cached;
@@ -186,7 +186,6 @@ if (!class_exists('TokenToMe'))
 		
 		public function display_infos()
 			{
-			
 			$data = $this->get_infos();
 			$request = $this->request;
 			
@@ -197,7 +196,7 @@ if (!class_exists('TokenToMe'))
 					{
 
 					case 'users/show':
-						$display  = '<img src="'.$data->profile_image_url.'" width="200" height="200" alt="" />';
+						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="" />';
 						$display .= '<ul>';
 						$display .= '<li><span class="ttm-users-show label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name">'.$data->name.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name">'.$data->screen_name.'</span></li>';
@@ -229,7 +228,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				delete_site_transient(substr(md5($this->request.''.$this->screen_name), 0, 10).'_ttm_transient');
+				delete_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient');
 			}
 			
 		}

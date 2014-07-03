@@ -178,6 +178,61 @@ if (!class_exists('TokenToMe'))
 			return $cached;
 			}
 			
+		/*
+		* Format obj from Twitter
+		* returns $format
+		*/
+		public function jc_twitter_format( $raw_text, $tweet = NULL ) 
+			{
+			// first set output to the value we received when calling this function
+			$format = $raw_text;
+
+			// create xhtml safe text (mostly to be safe of ampersands)
+			$format = htmlentities( html_entity_decode( $raw_text, ENT_NOQUOTES, 'UTF-8' ), ENT_NOQUOTES, 'UTF-8' );
+
+			// parse urls
+			if ( $tweet == NULL ) {
+				// for regular strings, just create <a> tags for each url
+				$pattern = '/([A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&\?\/.=]+)/i';
+				$replacement = '<a href="${1}" rel="external">${1}</a>';
+				$format = preg_replace( $pattern, $replacement, $format );
+			} else {
+				// for tweets, let's extract the urls from the entities object
+				foreach ( $tweet->entities->urls as $url ) {
+					$old_url = $url->url;
+					$expanded_url = ( empty( $url->expanded_url ) ) ? $url->url : $url->expanded_url;
+					$display_url = ( empty( $url->display_url ) ) ? $url->url : $url->display_url;
+					$replacement = '<a href="' . $expanded_url . '" rel="external">' . $display_url . '</a>';
+					$format = str_replace( $old_url, $replacement, $format );
+				}
+
+				// let's extract the hashtags from the entities object
+				foreach ( $tweet->entities->hashtags as $hashtags ) {
+					$hashtag = '#' . $hashtags->text;
+					$replacement = '<a href="http://twitter.com/search?q=%23' . $hashtags->text . '" rel="external">' . $hashtag . '</a>';
+					$format = str_ireplace( $hashtag, $replacement, $format );
+				}
+
+				// let's extract the usernames from the entities object
+				foreach ( $tweet->entities->user_mentions as $user_mentions ) {
+					$username = '@' . $user_mentions->screen_name;
+					$replacement = '<a href="http://twitter.com/' . $user_mentions->screen_name . '" rel="external" title="' . $user_mentions->name . ''.__('on Twitter','jm-ltsc').'">' . $username . '</a>';
+					$format = str_ireplace( $username, $replacement, $format );
+				}
+
+				// if we have media attached, let's extract those from the entities as well
+				if ( isset( $tweet->entities->media ) ) {
+					foreach ( $tweet->entities->media as $media ) {
+						$old_url = $media->url;
+						$replacement = '<a href="' . $media->expanded_url . '" rel="external" class="twitter-media" data-media="' . $media->media_url . '">' . $media->display_url . '</a>';
+						$format = str_replace( $old_url, $replacement, $format );
+					}
+				}
+			}
+
+			return $format;
+		}
+			
 			
 		/*
 		* Allows you to do what you want with display
@@ -188,8 +243,9 @@ if (!class_exists('TokenToMe'))
 			{
 			$data = $this->get_infos();
 			$request = $this->request;
+			$i = 1;
 			
-			if( is_object($data) ) 
+			if( !is_null($data) ) 
 				{
 			
 				switch( $request )
@@ -207,6 +263,8 @@ if (!class_exists('TokenToMe'))
 						$display .= '</ul>';
 					break;
 					
+					default:
+						$display = __('This request does not exist or is not taken into account with the display_infos() method !', $this->textdomain);
 					}
 				
 				}
@@ -217,7 +275,7 @@ if (!class_exists('TokenToMe'))
 				
 				}
 				
-			return $display;
+			return apply_filters('the_twitter_display', $display);
 		
 			}
 			

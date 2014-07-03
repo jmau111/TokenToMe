@@ -4,7 +4,7 @@ Plugin Name: TokenToMe
 Description: Get access token from Twitter
 Author: Julien Maury
 Author URI: https://tweetpressfr.github.io
-Version 1.1
+Version 1.2
 */
 
 if (!class_exists('TokenToMe'))
@@ -18,6 +18,7 @@ if (!class_exists('TokenToMe'))
 		public $request;
 		public $params = array();
 		public $cache;
+		public $textdomain = 'ttm';
 
 		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $screen_name = 'TweetPressFr', $cache = 900)
 			{
@@ -33,7 +34,7 @@ if (!class_exists('TokenToMe'))
 			}
 
 		/*
-		* Get access token from Twitter API 1.1
+		* Get token from Twitter API 1.1
 		* returns $access_token
 		*/
 		protected function get_access_token()
@@ -54,10 +55,68 @@ if (!class_exists('TokenToMe'))
 					'grant_type' => 'client_credentials'
 				)
 			);
+			
 			$call = wp_remote_post('https://api.twitter.com/oauth2/token', $args);
-			$keys = json_decode(wp_remote_retrieve_body($call));
-			$access_token = (property_exists($keys, 'access_token')) ? $keys->access_token : 'The Twitter API said no !';
-			return $access_token;
+			
+			// need to know what's going on before proceeding
+			if( !is_wp_error($call) 
+			  && isset( $call['response']['code'] )
+			  && 200 == $call['response']['code'] )
+				{
+				$keys = json_decode(wp_remote_retrieve_body($call));
+				update_option( md5($this->consumer_key.$this->consumer_secret).'_twitter_access_token', $keys->access_token );
+				return __('Access granted ^^ !', $this->textdomain);
+				} 
+				
+			else 
+				{
+					
+				return $this->check_http_code($call['response']['code']);
+				
+				}
+			
+			}
+			
+			
+		/*
+		* Full check
+		* returns $error
+		*/			
+		protected function check_http_code($http_code)
+			{
+			
+			switch( $http_code )
+				{
+
+				case '400':
+				case '401':
+				case '403':
+				case '406':
+					$error = __('Your public and/or private key might be unset or incorrect or request is wrong. In any case this error is not due to Twitter API.',$this->textdomain);
+					break;
+					
+					
+				case '404':
+					$error = __('Account might not exist',$this->textdomain);
+					break;
+				
+				case '429':
+					$error = __('Rate limits are exceed, take it easy!',$this->textdomain);
+					break;
+					
+				case '500':
+				case '502':
+				case '503':
+					$error = __('Twitter is overwhelmed or something bad happened with its API.',$this->textdomain);
+					break;
+					
+				default:
+					$error = __('Something is really wrong or missing.', $this->textdomain);		
+				
+				}
+				
+				return $error;
+			
 			}
 
 		/*
@@ -66,11 +125,13 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function get_obj()
 			{
+			
+			$access_token = get_option( md5($this->consumer_key.$this->consumer_secret ).'_twitter_access_token');
 
 			$args = array(
 				'httpversion' => '1.1',
 				'headers' => array(
-					'Authorization' => "Bearer {$this->get_access_token() }"
+					'Authorization' => "Bearer {$access_token}"
 				)
 			);
 			
@@ -83,10 +144,20 @@ if (!class_exists('TokenToMe'))
 			$query = add_query_arg( $sets, $q);
 			
 			$call = wp_remote_get($query, $args);
-			$obj = json_decode(wp_remote_retrieve_body($call), true); //associative array
-
 			
-			return $obj;
+			if( !is_wp_error($call) 
+			  && isset( $call['response']['code'] )
+			  && 200 == $call['response']['code'] )
+				{
+				$obj = json_decode(wp_remote_retrieve_body($call));
+				}
+			else 
+				{
+				$this->delete_cache();
+				$obj = $this->check_http_code($call['response']['code']);
+				}
+			
+			return apply_filters('the_twitter_object', $obj);
 			}
 			
 		/*
@@ -96,16 +167,61 @@ if (!class_exists('TokenToMe'))
 		public function get_infos()
 			{
 			
-			$cached = get_site_transient($this->screen_name.'_ttm_transient');
+			$cached = get_site_transient(substr(md5($this->screen_name.$this->request), 0, 10).'_ttm_transient');
 			
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
-				set_site_transient($this->screen_name.'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient(substr(md5($this->screen_name.$this->request), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
 			return $cached;
 			}
+			
+			
+		/*
+		* Allows you to do what you want with display
+		* returns $display
+		*/
+		
+		public function display_infos()
+			{
+			
+			$data = $this->get_infos();
+			$request = $this->request;
+			
+			if( is_object($data) ) 
+				{
+			
+				switch( $request )
+					{
+
+					case 'users/show':
+						$display  = '<img src="'.$data->profile_image_url.'" width="200" height="200" alt="" />';
+						$display .= '<ul>';
+						$display .= '<li><span class="ttm-users-show label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name">'.$data->name.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name">'.$data->screen_name.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('tweets', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show tweets-count">'.$data->statuses_count.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('followers', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followers-count">'.$data->followers_count.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('followings', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followings-count">'.$data->friends_count.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'.$data->favourites_count.'</span></li>';
+						$display .= '</ul>';
+					break;
+					
+					}
+				
+				}
+			else 
+				{
+				
+				$display = $data;
+				
+				}
+				
+			return $display;
+		
+			}
+			
 		
 		/*
 		* Delete cache
@@ -113,7 +229,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				delete_site_transient($this->screen_name.'_ttm_transient');
+				delete_site_transient(substr(md5($this->screen_name.$this->request), 0, 10).'_ttm_transient');
 			}
 			
 		}

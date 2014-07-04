@@ -29,6 +29,7 @@ if (!class_exists('TokenToMe'))
 			
 			if (   !$consumer_key 
 				|| !$consumer_secret 
+				|| !$request 
 				|| !is_string($consumer_key) 
 				|| !is_string($consumer_secret) 
 				|| !is_string($request) 

@@ -273,7 +273,7 @@ if (!class_exists('TokenToMe'))
 					
 					case 'users/lookup':
 					$num = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
-					$count = count($num, 1);// count() returns 1 if $num is not an array or an object
+					$count = count(explode( ',', $num), 1);// count() returns 1 if $num is not an array or an object
 					
 					$display = '<ul>'.$count;
 					

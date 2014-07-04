@@ -289,7 +289,7 @@ if (!class_exists('TokenToMe'))
 							$i++;
 							}
 							
-						$display .= '<ul>';
+						$display .= '</ul>';
 					break;
 					
 					case 'statuses/user_timeline':

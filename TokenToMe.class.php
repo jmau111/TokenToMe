@@ -269,7 +269,7 @@ if (!class_exists('TokenToMe'))
 					
 					case 'users/lookup':
 					$num = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
-					$count = count($num) + 1;// count() returns 1 if $num is not an array or an object
+					$count = count($num);// count() returns 1 if $num is not an array or an object
 					
 					$display = '<ul>';
 					
@@ -338,15 +338,15 @@ if (!class_exists('TokenToMe'))
 					break;
 					
 					default:
+						$this->delete_cache();
 						$display = __('This request does not exist or is not taken into account with the display_infos() method !', $this->textdomain);
 					}
 				
 				}
 			else 
 				{
-				
+				$this->delete_cache();
 				$display = $data;
-				
 				}
 				
 			return apply_filters('the_twitter_display', $display);

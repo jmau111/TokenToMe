@@ -39,6 +39,10 @@ Here is an example with the `display_infos()` method and the request `GET status
 
 	echo $infos;
 
+### Fork this class
+
+If you found something wrong, if you want to add stuffs, please fork the <a href="https://github.com/TweetPressFr/TokenToMe/tree/trunk">trunk version</a> not the master. Thanks.
+
 
 ## Changelog 
 

@@ -122,7 +122,7 @@ if (!class_exists('TokenToMe'))
 		* Get object from Twitter API 1.1 with the $access_token
 		* returns $obj from Twitter
 		*/
-		public function get_obj()
+		protected function get_obj()
 			{
 			$this->get_access_token();
 			$access_token = get_option( md5($this->consumer_key.$this->consumer_secret ).'_twitter_access_token');

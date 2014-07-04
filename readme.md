@@ -34,7 +34,7 @@ Here is an example with the `display_infos()` method and the request `GET status
 	
 **GET users/lookup**
 
-	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => array('TweetPressFr','twitter','support') );
+	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => 'TweetPressFr,twitter,support') );
 	$infos = $init->display_infos();
 
 	echo $infos;

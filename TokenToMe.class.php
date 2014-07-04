@@ -166,6 +166,7 @@ if (!class_exists('TokenToMe'))
 			return apply_filters('the_twitter_object', $obj);
 			}
 			
+			
 		/*
 		* Get infos but make sure there's some cache
 		* returns (object) $infos from Twitter
@@ -173,7 +174,7 @@ if (!class_exists('TokenToMe'))
 		public function get_infos()
 			{
 			
-			$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
+			$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
 			
 			$cached = get_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			
@@ -272,11 +273,11 @@ if (!class_exists('TokenToMe'))
 					
 					case 'users/lookup':
 					$num = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
-					$count = count($num);// count() returns 1 if $num is not an array or an object
+					$count = count($num, 1);// count() returns 1 if $num is not an array or an object
 					
-					$display = '<ul>';
+					$display = '<ul>'.$count;
 					
-						while( $i <= $count) // the tricky part here, you have to give the right offset
+						while( $i <= $count ) // the tricky part here, you have to give the right offset
 							{
 							$display .= '<li class="ttm-users-lookup">';
 							$display .= '<img src="'. $data[$i - 1]->profile_image_url.'" width="36" height="36" alt="@'.$data[$i - 1]->screen_name.'" />';
@@ -363,7 +364,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
+				$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
 				delete_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			}
 			

@@ -11,7 +11,7 @@ consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Ge
 
 Class that allows you to grab data from Twitter in WordPress
 
-    $init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array(), 'tweetpressfr');
+    $init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array('screen_name' => 'TweetPressFr') );
     $infos = $init->get_infos();
 	var_dump($infos);
 	
@@ -21,7 +21,7 @@ There's a cache (the very last param for the class), 15 minutes by default.
 
 Here is an example with the `display_infos()` method and the request `GET statuses/user_timeline` :
 	
-	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', array('count' => 20), 'tweetpressfr');
+	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', array('count' => 20, 'screen_name' => 'TweetPressFr') );
 	$infos = $init->display_infos();
 
 	echo $infos;
@@ -32,7 +32,8 @@ Here is an example with the `display_infos()` method and the request `GET status
 # 1.2
 * Add checking method
 * Add display method
-* access_token as option
+* Access_token as option
+* Delete screen name param (could be blocking for other requests)
 
 # 1.1
 * Fix some bugs in case class is not set properly

@@ -14,17 +14,15 @@ if (!class_exists('TokenToMe'))
 		{
 		public $consumer_key;
 		protected $consumer_secret;
-		public $screen_name;
 		public $request;
 		public $params = array();
 		public $cache;
 		public $textdomain = 'ttm';
 
-		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $screen_name = 'TweetPressFr', $cache = 900)
+		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $cache = 900)
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
-			$this->screen_name = $screen_name;
 			$this->request = $request;
 			$this->params = $params;
 			$this->cache = $cache;
@@ -137,7 +135,7 @@ if (!class_exists('TokenToMe'))
 			);
 			
 			$defaults = array(
-				'screen_name' => $this->screen_name
+				'count' => 1
 			);
 			
 			$q = "https://api.twitter.com/1.1/{$this->request}.json";
@@ -167,12 +165,12 @@ if (!class_exists('TokenToMe'))
 		*/
 		public function get_infos()
 			{
-			$cached = get_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient');
+			$cached = get_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
 			
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
-				set_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
 			return $cached;
@@ -263,7 +261,6 @@ if (!class_exists('TokenToMe'))
 					break;
 					
 					case 'statuses/user_timeline':
-					
 						$display = '<ul>';
 						$count = isset( $this->params['count'] ) ? $this->params['count'] : 1;
 					
@@ -319,7 +316,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				delete_site_transient(substr(md5($this->request.$this->screen_name), 0, 10).'_ttm_transient');
+				delete_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
 			}
 			
 		}

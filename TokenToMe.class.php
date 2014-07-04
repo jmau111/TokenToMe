@@ -249,15 +249,41 @@ if (!class_exists('TokenToMe'))
 					{
 
 					case 'users/show':
-						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="" />';
+						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="@.'.$data->screen_name.'" />';
 						$display .= '<ul>';
-						$display .= '<li><span class="ttm-users-show label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name">'.$data->name.'</span></li>';
-						$display .= '<li><span class="ttm-users-show label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name">'.$data->screen_name.'</span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name"><a href="https://twitter.com/'.$data->screen_name.'">'.$data->name.'</a></span></li>';
+						$display .= '<li><span class="ttm-users-show label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name"><a href="https://twitter.com/'.$data->screen_name.'">'.$data->screen_name.'</a></span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('tweets', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show tweets-count">'.$data->statuses_count.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('followers', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followers-count">'.$data->followers_count.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('followings', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followings-count">'.$data->friends_count.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'.$data->favourites_count.'</span></li>';
 						$display .= '</ul>';
+					break;
+					
+					case 'users/lookup':
+					$num = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
+					$count = count($num) + 1;// count() returns 1 if $num is not an array or an object
+					
+					$display = '<ul>';
+					
+						while( $i < $count) // the tricky part here, you have to give the right offset
+							{
+							$display .= '<li class="ttm-users-lookup">';
+							$display .= '<img src="'. $data[$i - 1]->profile_image_url.'" width="36" height="36" alt="@'.$data[$i - 1]->screen_name.'" />';
+							$display .= '<ul>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name"><a href="https://twitter.com/'.$data[$i - 1]->screen_name.'">'. $data[$i - 1]->name.'</a></span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name"><a href="https://twitter.com/'.$data[$i - 1]->screen_name.'">'. $data[$i - 1]->screen_name.'</a></span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('tweets', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show tweets-count">'. $data[$i - 1]->statuses_count.'</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('followers', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followers-count">'. $data[$i - 1]->followers_count.'</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('followings', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followings-count">'. $data[$i - 1]->friends_count.'</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'. $data[$i - 1]->favourites_count.'</span></li>';
+							$display .= '</ul>';
+							$display .= '</li>';
+							
+							$i++;
+							}
+							
+						$display .= '<ul>';
 					break;
 					
 					case 'statuses/user_timeline':

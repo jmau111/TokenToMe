@@ -277,7 +277,7 @@ if (!class_exists('TokenToMe'))
 								$profile_image_url = $data[$i - 1]->user->profile_image_url;
 								
 								$display .= '<li>';
-								$display .= '<img src="'.$profile_image_url.'" alt=""/>';
+								$display .= '<img src="'.$profile_image_url.'" alt="@'.$screen_name.'"/>';
 								$display .= '<span class="ttm-user-timeline name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a>'."\t";
 								$display .= '<span class="ttm-user-timeline screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></span>'."\t";
 								$display .= '<span class="ttm-user-timeline date"><a href="https://twitter.com/'.$screen_name.'/statuses/'.$id_str.'">'.date( $date_format, strtotime($date) ).'</a>'."\n";	

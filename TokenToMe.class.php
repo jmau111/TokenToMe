@@ -173,7 +173,7 @@ if (!class_exists('TokenToMe'))
 		public function get_infos()
 			{
 			
-			$set_cache = isset($this->params) ? implode( '', array_values($this->params) ) : $this->request;
+			$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
 			
 			$cached = get_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			
@@ -363,7 +363,7 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				$set_cache = isset($this->params) ? implode( '', array_values($this->params) ) : $this->request;
+				$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
 				delete_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			}
 			

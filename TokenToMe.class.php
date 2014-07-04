@@ -273,7 +273,7 @@ if (!class_exists('TokenToMe'))
 					
 					$display = '<ul>';
 					
-						while( $i < $count) // the tricky part here, you have to give the right offset
+						while( $i <= $count) // the tricky part here, you have to give the right offset
 							{
 							$display .= '<li class="ttm-users-lookup">';
 							$display .= '<img src="'. $data[$i - 1]->profile_image_url.'" width="36" height="36" alt="@'.$data[$i - 1]->screen_name.'" />';
@@ -308,7 +308,7 @@ if (!class_exists('TokenToMe'))
 								$class = 'ttm-tweets-search';
 								}	
 					
-						while( $i < $count ) 
+						while( $i <= $count ) 
 							{
 							if ( isset( $data[$i - 1] ) ) 
 								{

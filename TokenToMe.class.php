@@ -27,8 +27,14 @@ if (!class_exists('TokenToMe'))
 			$this->params = $params;
 			$this->cache = $cache;
 			
-			if (!$consumer_key || !$consumer_secret || $cache < 900) 
-				return;
+			if (   !$consumer_key 
+				|| !$consumer_secret 
+				|| !is_string($consumer_key) 
+				|| !is_string($consumer_secret) 
+				|| !is_string($request) 
+				|| $cache < 900
+			) 
+				return __('The class is not set properly!',$this->textdomain);
 			
 			}
 
@@ -163,7 +169,7 @@ if (!class_exists('TokenToMe'))
 		* Get infos but make sure there's some cache
 		* returns (object) $infos from Twitter
 		*/
-		public function get_infos()
+		protected function get_infos()
 			{
 			$cached = get_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
 			
@@ -242,10 +248,12 @@ if (!class_exists('TokenToMe'))
 			$request = $this->request;
 			$i = 1;
 			
-			if( !is_null($data) ) 
-				{	
+			if( is_object($data) ) 
+				{
+			
 				switch( $request )
 					{
+
 					case 'users/show':
 						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="@.'.$data->screen_name.'" />';
 						$display .= '<ul>';
@@ -281,7 +289,7 @@ if (!class_exists('TokenToMe'))
 							$i++;
 							}
 							
-						$display .= '<ul>';
+						$display .= '</ul>';
 					break;
 					
 					case 'statuses/user_timeline':

@@ -26,7 +26,6 @@ Here is an example with the `display_infos()` method and the request `GET status
 
 	echo $infos;
 
-
 ## Changelog ##
 
 # 1.2

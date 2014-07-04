@@ -172,12 +172,15 @@ if (!class_exists('TokenToMe'))
 		*/
 		public function get_infos()
 			{
-			$cached = get_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
+			
+			$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
+			
+			$cached = get_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
-				set_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
 			return $cached;
@@ -273,7 +276,7 @@ if (!class_exists('TokenToMe'))
 					
 					$display = '<ul>';
 					
-						while( $i < $count) // the tricky part here, you have to give the right offset
+						while( $i <= $count) // the tricky part here, you have to give the right offset
 							{
 							$display .= '<li class="ttm-users-lookup">';
 							$display .= '<img src="'. $data[$i - 1]->profile_image_url.'" width="36" height="36" alt="@'.$data[$i - 1]->screen_name.'" />';
@@ -308,7 +311,7 @@ if (!class_exists('TokenToMe'))
 								$class = 'ttm-tweets-search';
 								}	
 					
-						while( $i < $count ) 
+						while( $i <= $count ) 
 							{
 							if ( isset( $data[$i - 1] ) ) 
 								{
@@ -360,7 +363,8 @@ if (!class_exists('TokenToMe'))
 		*/
 		protected function delete_cache()
 			{
-				delete_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
+				$set_cache = isset($this->params) ? implode( '', array_values($this->params) ).$this->request : $this->request;
+				delete_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
 			}
 			
 		}

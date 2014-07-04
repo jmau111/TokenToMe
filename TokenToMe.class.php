@@ -249,7 +249,7 @@ if (!class_exists('TokenToMe'))
 			$request = $this->request;
 			$i = 1;
 			
-			if( is_object($data) ) 
+			if( !is_null($data) ) 
 				{
 			
 				switch( $request )

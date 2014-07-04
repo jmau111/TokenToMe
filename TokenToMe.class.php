@@ -170,7 +170,7 @@ if (!class_exists('TokenToMe'))
 		* Get infos but make sure there's some cache
 		* returns (object) $infos from Twitter
 		*/
-		protected function get_infos()
+		public function get_infos()
 			{
 			$cached = get_site_transient(substr(md5($this->request), 0, 10).'_ttm_transient');
 			

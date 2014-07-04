@@ -9,7 +9,7 @@ consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Ge
 
 ## Description ##
 
-# Get infos as object #
+### Get infos as object ### 
 
 Class that allows you to grab data from Twitter in WordPress
 
@@ -21,7 +21,7 @@ The fourth param should give you the ability to add additional param according t
 
 There's a cache (the very last param for the class), 15 minutes by default.
 
-# Save your time #
+### Save your time ### 
 
 **GET statuses/user_timeline**
 

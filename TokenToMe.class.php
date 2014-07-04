@@ -122,7 +122,7 @@ if (!class_exists('TokenToMe'))
 		* Get object from Twitter API 1.1 with the $access_token
 		* returns $obj from Twitter
 		*/
-		protected function get_obj()
+		public function get_obj()
 			{
 			$this->get_access_token();
 			$access_token = get_option( md5($this->consumer_key.$this->consumer_secret ).'_twitter_access_token');
@@ -291,6 +291,41 @@ if (!class_exists('TokenToMe'))
 								}
 							}
 						$display .= '</ul>';
+					break;
+					
+					case 'search/tweets': // looks like it needs some refactoring but actually different obj here
+						$display = '<ul>';
+						$count = isset( $this->params['count'] ) ? $this->params['count'] : 1;
+					
+						while( $i < $count ) 
+							{
+							if ( isset( $data->statuses[$i - 1] ) ) 
+								{
+								$text = $this->jc_twitter_format( $data->statuses[$i - 1]->text, $data->statuses[$i - 1] );
+								$id_str =$data->statuses[$i - 1]->id_str;
+								$screen_name = $data->statuses[$i - 1]->user->screen_name;
+								$name = $data->statuses[$i - 1]->user->name;
+								$date = $data->statuses[$i - 1]->created_at;
+								$date_format = 'j/m/y - '.get_option('time_format');
+								$profile_image_url = $data->statuses[$i - 1]->user->profile_image_url;	
+
+								
+								$display .= '<li class="ttm-tweets-search tweets">';
+								$display .= '<img src="'.$profile_image_url.'" alt="@'.$screen_name.'"/>';
+								$display .= '<span class="ttm-tweets-search name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a>'."\t";
+								$display .= '<span class="ttm-tweets-search screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></span>'."\t";
+								$display .= '<span class="ttm-tweets-search date"><a href="https://twitter.com/'.$screen_name.'/statuses/'.$id_str.'">'.date( $date_format, strtotime($date) ).'</a>'."\n";	
+								$display .= '<span class="ttm-tweets-search text">'.$text.'</span>'."\n";
+								$display .= '<span class="ttm-tweets-search reply"><a href="https://twitter.com/intent/tweet?in_reply_to='.$id_str.'">'. __( 'Reply', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '<span class="ttm-tweets-search retweet"><a href="https://twitter.com/intent/retweet?tweet_id='.$id_str.'">'. __( 'Retweet', $this->textdomain ) .'</a> </span>'."\t";
+								$display .= '<span class="ttm-tweets-search favorite"><a href="https://twitter.com/intent/favorite?tweet_id='.$id_str.'">'. __( 'Favorite', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '</li>';								
+								
+								$i++;
+								}
+							}
+						$display .= '</ul>';						
+						
 					break;
 					
 					default:

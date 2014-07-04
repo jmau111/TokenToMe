@@ -21,7 +21,7 @@ The fourth param should give you the ability to add additional param according t
 
 There's a cache (the very last param for the class), 15 minutes by default.
 
-# Use the display method to save your time #
+# Save your time #
 
 **GET statuses/user_timeline**
 
@@ -34,7 +34,7 @@ Here is an example with the `display_infos()` method and the request `GET status
 	
 **GET users/lookup**
 
-	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('count' => 20, 'screen_name' => array('TweetPressFr','twitter','support') );
+	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => array('TweetPressFr','twitter','support') );
 	$infos = $init->display_infos();
 
 	echo $infos;

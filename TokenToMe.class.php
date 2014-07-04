@@ -243,11 +243,9 @@ if (!class_exists('TokenToMe'))
 			$i = 1;
 			
 			if( !is_null($data) ) 
-				{
-			
+				{	
 				switch( $request )
 					{
-
 					case 'users/show':
 						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="@.'.$data->screen_name.'" />';
 						$display .= '<ul>';

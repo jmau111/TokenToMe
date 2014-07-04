@@ -216,7 +216,7 @@ if (!class_exists('TokenToMe'))
 				// let's extract the usernames from the entities object
 				foreach ( $tweet->entities->user_mentions as $user_mentions ) {
 					$username = '@' . $user_mentions->screen_name;
-					$replacement = '<a href="http://twitter.com/' . $user_mentions->screen_name . '" rel="external" title="' . $user_mentions->name . ''.__('on Twitter','jm-ltsc').'">' . $username . '</a>';
+					$replacement = '<a href="http://twitter.com/' . $user_mentions->screen_name . '" rel="external" title="' . $user_mentions->name . ''.__('on Twitter',$this->textdomain).'">' . $username . '</a>';
 					$format = str_ireplace( $username, $replacement, $format );
 				}
 
@@ -237,8 +237,7 @@ if (!class_exists('TokenToMe'))
 		/*
 		* Allows you to do what you want with display
 		* returns $display
-		*/
-		
+		*/		
 		public function display_infos()
 			{
 			$data = $this->get_infos();
@@ -260,6 +259,40 @@ if (!class_exists('TokenToMe'))
 						$display .= '<li><span class="ttm-users-show label">'.__('followers', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followers-count">'.$data->followers_count.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('followings', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show followings-count">'.$data->friends_count.'</span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'.$data->favourites_count.'</span></li>';
+						$display .= '</ul>';
+					break;
+					
+					case 'statuses/user_timeline':
+					
+						$display = '<ul>';
+						$count = isset( $this->params['count'] ) ? $this->params['count'] : 1;
+					
+						while( $i < $count ) 
+							{
+							if ( isset( $data[$i - 1] ) ) 
+								{
+								$text					= $this->jc_twitter_format( $data[$i - 1]->text, $data[$i - 1] );
+								$id_str 				= $data[$i - 1]->id_str;
+								$screen_name 			= $data[$i - 1]->user->screen_name;
+								$name 					= $data[$i - 1]->user->name;
+								$date 					= $data[$i - 1]->created_at;
+								$date_format 			= 'j/m/y - '.get_option('time_format');
+								$profile_image_url 		= $data[$i - 1]->user->profile_image_url;
+								
+								$display .= '<li>';
+								$display .= '<img src="'.$profile_image_url.'" alt=""/>';
+								$display .= '<span class="ttm-user-timeline name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a>'."\t";
+								$display .= '<span class="ttm-user-timeline screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></span>'."\t";
+								$display .= '<span class="ttm-user-timeline date"><a href="https://twitter.com/'.$screen_name.'/statuses/'.$id_str.'">'.date( $date_format, strtotime($date) ).'</a>'."\n";	
+								$display .= '<span class="ttm-user-timeline text">'.$text.'</span>'."\n";
+								$display .= '<span class="ttm-user-timeline reply"><a href="https://twitter.com/intent/tweet?in_reply_to='.$id_str.'">'. __( 'Reply', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '<span class="ttm-user-timeline retweet"><a href="https://twitter.com/intent/retweet?tweet_id='.$id_str.'">'. __( 'Retweet', $this->textdomain ) .'</a> </span>'."\t";
+								$display .= '<span class="ttm-user-timeline favorite"><a href="https://twitter.com/intent/favorite?tweet_id='.$id_str.'">'. __( 'Favorite', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '</li>';
+								
+								$i++;
+								}
+							}
 						$display .= '</ul>';
 					break;
 					

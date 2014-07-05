@@ -23,16 +23,13 @@ if (!class_exists('TokenToMe'))
 			{
 			$this->consumer_key = $consumer_key;
 			$this->consumer_secret = $consumer_secret;
-			$this->request = $request;
+			$this->request = (string) $request;
 			$this->params = $params;
 			$this->cache = $cache;
 			
 			if (   !$consumer_key 
 				|| !$consumer_secret 
 				|| !$request 
-				|| !is_string($consumer_key) 
-				|| !is_string($consumer_secret) 
-				|| !is_string($request) 
 				|| $cache < 900
 			) 
 				return __('The class is not set properly!',$this->textdomain);

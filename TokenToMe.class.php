@@ -173,12 +173,12 @@ if (!class_exists('TokenToMe'))
 			
 			$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
 			
-			$cached = get_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
+			$cached = get_site_transient(md5($set_cache));
 			
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
-				set_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient', $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient(md5($set_cache), $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
 				
 			return $cached;
@@ -187,7 +187,7 @@ if (!class_exists('TokenToMe'))
 		/*
 		* Format obj from Twitter
 		* returns $format
-		*/
+		*/ 
 		public function jc_twitter_format( $raw_text, $tweet = NULL ) 
 			{
 			// first set output to the value we received when calling this function
@@ -362,7 +362,7 @@ if (!class_exists('TokenToMe'))
 		protected function delete_cache()
 			{
 				$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
-				delete_site_transient(substr(md5($set_cache), 0, 10).'_ttm_transient');
+				delete_site_transient(md5($set_cache));
 			}
 			
 		}

@@ -19,18 +19,18 @@ if (!class_exists('TokenToMe'))
 		public $cache;
 		public $textdomain = 'ttm';
 
-		public function __construct($consumer_key = false, $consumer_secret = false, $request = 'users/show', $params = array(), $cache = 900)
+		public function __construct($Consumer_key = false, $Consumer_secret = false, $Request = 'users/show', $Params = array(), $Cache = 900)
 			{
-			$this->consumer_key = $consumer_key;
-			$this->consumer_secret = $consumer_secret;
-			$this->request = (string) $request;
-			$this->params = $params;
-			$this->cache = $cache;
+			$this->consumer_key = $Consumer_key;
+			$this->consumer_secret = $Consumer_secret;
+			$this->request = (string) $Request;
+			$this->params = $Params;
+			$this->cache = $Cache;
 			
-			if (   !$consumer_key 
-				|| !$consumer_secret 
-				|| !$request 
-				|| $cache < 900
+			if (   !$Consumer_key 
+				|| !$Consumer_secret 
+				|| !$Request 
+				|| $Cache < 900
 			) 
 				return __('The class is not set properly!',$this->textdomain);
 			
@@ -299,15 +299,21 @@ if (!class_exists('TokenToMe'))
 						$display = '<ul>';
 						$count = isset( $this->params['count'] ) ? $this->params['count'] : 1;
 						
-							if( $this->request == 'statuses/user_timeline' ) 
-								{
+						switch( $this->request ) 
+							{
+
+							case 'statuses/user_timeline':
 								$class = 'ttm-user-timeline';
-								}
-							elseif( $this->request == 'search/tweets' ) 
-								{
+							break;
+
+							case 'search/tweets': 
 								$data  = $data->statuses;
 								$class = 'ttm-tweets-search';
-								}	
+							break;
+
+							default:
+								$class = 'ttm-user-timeline';
+							}	
 					
 						while( $i <= $count ) 
 							{

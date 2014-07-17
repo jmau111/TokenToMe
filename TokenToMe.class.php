@@ -4,7 +4,7 @@ Plugin Name: TokenToMe
 Description: Get access token from Twitter
 Author: Julien Maury
 Author URI: https://tweetpressfr.github.io
-Version 1.2
+Version 1.3
 */
 
 if (!class_exists('TokenToMe'))
@@ -246,7 +246,7 @@ if (!class_exists('TokenToMe'))
 			$request = $this->request;
 			$i = 1;
 
-			if( !is_null($data) ) 
+			if( !is_null($data) && !is_string($data) ) 
 				{
 
 				switch( $request )

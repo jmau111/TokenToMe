@@ -6,7 +6,7 @@ Author: Julien Maury
 Author URI: https://tweetpressfr.github.io
 Version 1.2
 */
-<?php
+
 if (!class_exists('TokenToMe'))
 	{
 	class TokenToMe

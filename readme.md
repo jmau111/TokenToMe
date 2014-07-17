@@ -46,6 +46,9 @@ If you found something wrong, if you want to add stuffs, please fork the <a href
 
 ## Changelog 
 
+# 1.3
+* Fix notices when no settings or wrong settings are set
+
 # 1.2
 * Add checking method
 * Add display method

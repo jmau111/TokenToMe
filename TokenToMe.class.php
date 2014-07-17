@@ -26,14 +26,14 @@ if (!class_exists('TokenToMe'))
 			$this->request = (string) $Request;
 			$this->params = $Params;
 			$this->cache = $Cache;
-			
+
 			if (   !$Consumer_key 
 				|| !$Consumer_secret 
 				|| !$Request 
 				|| $Cache < 900
 			) 
 				return __('The class is not set properly!',$this->textdomain);
-			
+
 			}
 
 		/*
@@ -58,9 +58,9 @@ if (!class_exists('TokenToMe'))
 					'grant_type' => 'client_credentials'
 				)
 			);
-			
+
 			$call = wp_remote_post('https://api.twitter.com/oauth2/token', $args);
-			
+
 			// need to know what's going on before proceeding
 			if( !is_wp_error($call) 
 			  && isset( $call['response']['code'] )
@@ -70,56 +70,52 @@ if (!class_exists('TokenToMe'))
 				update_option( md5($this->consumer_key.$this->consumer_secret).'_twitter_access_token', $keys->access_token );
 				return __('Access granted ^^ !', $this->textdomain);
 				} 
-				
+
 			else 
 				{
-					
+
 				return $this->check_http_code($call['response']['code']);
-				
+
 				}
-			
+
 			}
-			
-			
+
+
 		/*
 		* Full check
 		* returns $error
 		*/			
 		protected function check_http_code($http_code)
 			{
-			
+
 			switch( $http_code )
 				{
 
 				case '400':
 				case '401':
 				case '403':
-				case '406':
-					$error = __('Your public and/or private key might be unset or incorrect or request is wrong. In any case this error is not due to Twitter API.',$this->textdomain);
-					break;
-					
-					
 				case '404':
-					$error = __('Account might not exist',$this->textdomain);
+				case '406':
+					$error = '<div class="error">'.__('Your credentials might be unset or incorrect or username is wrong. In any case this error is not due to Twitter API.',$this->textdomain).'</div>';
 					break;
-				
+
 				case '429':
-					$error = __('Rate limits are exceed, take it easy!',$this->textdomain);
+					$error = '<div class="error">'.__('Rate limits are exceed!',$this->textdomain).'</div>';
 					break;
-					
+
 				case '500':
 				case '502':
 				case '503':
-					$error = __('Twitter is overwhelmed or something bad happened with its API.',$this->textdomain);
+					$error = '<div class="error">'.__('Twitter is overwhelmed or something bad happened with its API.',$this->textdomain).'</div>';
 					break;
-					
+
 				default:
-					$error = __('Something is really wrong or missing.', $this->textdomain);		
-				
+					$error = '<div class="error">'.__('Something is wrong or missing. ', $this->textdomain).'</div>';		
+
 				}
-				
+
 				return $error;
-			
+
 			}
 
 		/*
@@ -137,17 +133,17 @@ if (!class_exists('TokenToMe'))
 					'Authorization' => "Bearer {$access_token}"
 				)
 			);
-			
+
 			$defaults = array(
 				'count' => 1
 			);
-			
+
 			$q = "https://api.twitter.com/1.1/{$this->request}.json";
 			$sets = wp_parse_args( $this->params, $defaults );
 			$query = add_query_arg( $sets, $q);
-			
+
 			$call = wp_remote_get($query, $args);
-			
+
 			if( !is_wp_error($call) 
 			  && isset( $call['response']['code'] )
 			  && 200 == $call['response']['code'] )
@@ -159,31 +155,31 @@ if (!class_exists('TokenToMe'))
 				$this->delete_cache();
 				$obj = $this->check_http_code($call['response']['code']);
 				}
-			
+
 			return apply_filters('the_twitter_object', $obj);
 			}
-			
-			
+
+
 		/*
 		* Get infos but make sure there's some cache
 		* returns (object) $infos from Twitter
 		*/
 		public function get_infos()
 			{
-			
+
 			$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
-			
+
 			$cached = get_site_transient(md5($set_cache));
-			
+
 			if( false === $cached ) 
 				{
 				$cached = $this->get_obj();
 				set_site_transient(md5($set_cache), $cached, $this->cache);//900 by default because Twitter says every 15 minutes in its doc
 				}
-				
+
 			return $cached;
 			}
-			
+
 		/*
 		* Format obj from Twitter
 		* returns $format
@@ -238,8 +234,8 @@ if (!class_exists('TokenToMe'))
 
 			return $format;
 		}
-			
-			
+
+
 		/*
 		* Allows you to do what you want with display
 		* returns $display
@@ -249,16 +245,16 @@ if (!class_exists('TokenToMe'))
 			$data = $this->get_infos();
 			$request = $this->request;
 			$i = 1;
-			
+
 			if( !is_null($data) ) 
 				{
-			
+
 				switch( $request )
 					{
 
 					case 'users/show':
 						$display  = '<img src="'.$data->profile_image_url.'" width="36" height="36" alt="@.'.$data->screen_name.'" />';
-						$display .= '<ul>';
+						$display .= '<ul class="ttm-container">';
 						$display .= '<li><span class="ttm-users-show label">'.__('name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show user-name"><a href="https://twitter.com/'.$data->screen_name.'">'.$data->name.'</a></span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('screen name', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show screen-name"><a href="https://twitter.com/'.$data->screen_name.'">'.$data->screen_name.'</a></span></li>';
 						$display .= '<li><span class="ttm-users-show label">'.__('tweets', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show tweets-count">'.$data->statuses_count.'</span></li>';
@@ -267,13 +263,13 @@ if (!class_exists('TokenToMe'))
 						$display .= '<li><span class="ttm-users-show label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'.$data->favourites_count.'</span></li>';
 						$display .= '</ul>';
 					break;
-					
+
 					case 'users/lookup':
 					$num = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
 					$count = count(explode( ',', $num), 1);// count() returns 1 if $num is not an array or an object
-					
-					$display = '<ul>'.$count;
-					
+
+					$display = '<ul class="ttm-container">';
+
 						while( $i <= $count ) // the tricky part here, you have to give the right offset
 							{
 							$display .= '<li class="ttm-users-lookup">';
@@ -287,18 +283,17 @@ if (!class_exists('TokenToMe'))
 							$display .= '<li><span class="ttm-users-lookup label">'.__('favorites', $this->textdomain).'</span>'.' '.'<span class="ttm-users-show favorites-count">'. $data[$i - 1]->favourites_count.'</span></li>';
 							$display .= '</ul>';
 							$display .= '</li>';
-							
+
 							$i++;
 							}
-							
+
 						$display .= '</ul>';
 					break;
-					
+
 					case 'statuses/user_timeline':
-					case 'search/tweets':
-						$display = '<ul>';
+						$display = '<ul class="ttm-container">';
 						$count = isset( $this->params['count'] ) ? $this->params['count'] : 1;
-						
+
 						switch( $this->request ) 
 							{
 
@@ -306,15 +301,10 @@ if (!class_exists('TokenToMe'))
 								$class = 'ttm-user-timeline';
 							break;
 
-							case 'search/tweets': 
-								$data  = $data->statuses;
-								$class = 'ttm-tweets-search';
-							break;
-
 							default:
 								$class = 'ttm-user-timeline';
 							}	
-					
+
 						while( $i <= $count ) 
 							{
 							if ( isset( $data[$i - 1] ) ) 
@@ -326,41 +316,41 @@ if (!class_exists('TokenToMe'))
 								$date = $data[$i - 1]->created_at;
 								$date_format = 'j/m/y - '.get_option('time_format');
 								$profile_image_url = $data[$i - 1]->user->profile_image_url;
-								
+
 								$display .= '<li class="'.$class.' tweets">';
-								$display .= '<img src="'.$profile_image_url.'" alt="@'.$screen_name.'"/>';
-								$display .= '<span class="'.$class.' name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a>'."\t";
-								$display .= '<span class="'.$class.' screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></span>'."\t";
+								$display .= '<img class="'.$class.' twittar" width="48" height="48" src="'.$profile_image_url.'" alt="@'.$screen_name.'"/>';
+								$display .= '<strong class="'.$class.' name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a></strong>'."\t";
+								$display .= '<strong class="'.$class.' screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></strong>'."\t";
 								$display .= '<span class="'.$class.' date"><a href="https://twitter.com/'.$screen_name.'/statuses/'.$id_str.'">'.date( $date_format, strtotime($date) ).'</a>'."\n";	
 								$display .= '<span class="'.$class.' text">'.$text.'</span>'."\n";
-								$display .= '<span class="'.$class.' reply"><a href="https://twitter.com/intent/tweet?in_reply_to='.$id_str.'">'. __( 'Reply', $this->textdomain ) .'</a></span>'."\t";
-								$display .= '<span class="'.$class.' retweet"><a href="https://twitter.com/intent/retweet?tweet_id='.$id_str.'">'. __( 'Retweet', $this->textdomain ) .'</a> </span>'."\t";
-								$display .= '<span class="'.$class.' favorite"><a href="https://twitter.com/intent/favorite?tweet_id='.$id_str.'">'. __( 'Favorite', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '<span class="'.$class.' reply"><a class="Icon Icon--reply" href="https://twitter.com/intent/tweet?in_reply_to='.$id_str.'">'. __( 'Reply', $this->textdomain ) .'</a></span>'."\t";
+								$display .= '<span class="'.$class.' retweet"><a class="Icon Icon--retweet" href="https://twitter.com/intent/retweet?tweet_id='.$id_str.'">'. __( 'Retweet', $this->textdomain ) .'</a> </span>'."\t";
+								$display .= '<span class="'.$class.' favorite"><a class="Icon Icon--favorite" href="https://twitter.com/intent/favorite?tweet_id='.$id_str.'">'. __( 'Favorite', $this->textdomain ) .'</a></span>'."\t";
 								$display .= '</li>';
-								
+
 								$i++;
 								}
 							}
 						$display .= '</ul>';
 					break;
-					
+
 					default:
 						$this->delete_cache();
 						$display = __('This request does not exist or is not taken into account with the display_infos() method !', $this->textdomain);
 					}
-				
+
 				}
 			else 
 				{
 				$this->delete_cache();
 				$display = $data;
 				}
-				
+
 			return apply_filters('the_twitter_display', $display);
-		
+
 			}
-			
-		
+
+
 		/*
 		* Delete cache
 		* In case you need to delete transient
@@ -370,6 +360,6 @@ if (!class_exists('TokenToMe'))
 				$set_cache = isset($this->params) ? implode(',',$this->params) . $this->request : $this->request;
 				delete_site_transient(md5($set_cache));
 			}
-			
+
 		}
 	}

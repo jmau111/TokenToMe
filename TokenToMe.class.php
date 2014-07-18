@@ -72,8 +72,9 @@ if (!class_exists('TokenToMe'))
 
 			// need to know what's going on before proceeding
 			if( !is_wp_error($call) 
-			  && isset( $call['response']['code'] )
-			  && 200 == $call['response']['code'] )
+     			&& 'OK' == wp_remote_retrieve_response_message( $call )
+                && 200 == wp_remote_retrieve_response_code( $call )
+                )
 				{
 				$keys = json_decode(wp_remote_retrieve_body($call));
 				update_option( md5($this->consumer_key.$this->consumer_secret).'_twitter_access_token', $keys->access_token );

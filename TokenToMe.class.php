@@ -17,15 +17,24 @@ if (!class_exists('TokenToMe'))
 		public $request;
 		public $params = array();
 		public $cache;
+		public $display_media;
 		public $textdomain = 'ttm';
 
-		public function __construct($Consumer_key = false, $Consumer_secret = false, $Request = 'users/show', $Params = array(), $Cache = 900)
+		public function __construct(
+			$Consumer_key = false, 
+			$Consumer_secret = false, 
+			$Request = 'users/show', 
+			$Params = array(), 
+			$Cache = 900, 
+			$Display_media = false
+		)
 			{
 			$this->consumer_key = $Consumer_key;
 			$this->consumer_secret = $Consumer_secret;
 			$this->request = (string) $Request;
-			$this->params = $Params;
+			$this->params = (array) $Params;
 			$this->cache = $Cache;
+			$this->display_media = (bool) $Display_media;
 
 			if (   !$Consumer_key 
 				|| !$Consumer_secret 
@@ -129,6 +138,7 @@ if (!class_exists('TokenToMe'))
 
 			$args = array(
 				'httpversion' => '1.1',
+				'timeout'	=> 120,
 				'headers' => array(
 					'Authorization' => "Bearer {$access_token}"
 				)
@@ -316,13 +326,21 @@ if (!class_exists('TokenToMe'))
 								$date = $data[$i - 1]->created_at;
 								$date_format = 'j/m/y - '.get_option('time_format');
 								$profile_image_url = $data[$i - 1]->user->profile_image_url;
+								$pic_twitter = '';
 
+								if( $this->display_media && property_exists($data[$i - 1]->entities, 'media') ) {
+									foreach ($data[$i - 1]->entities->media as $pic) {
+										$pic_twitter = '<img width="100%" src="'.$pic->media_url_https.'" alt="" />';
+									}
+								}
+								
 								$display .= '<li class="'.$class.' tweets">';
 								$display .= '<img class="'.$class.' twittar" width="48" height="48" src="'.$profile_image_url.'" alt="@'.$screen_name.'"/>';
 								$display .= '<strong class="'.$class.' name"><a href="https://twitter.com/'.$screen_name.'">'.$name.'</span></a></strong>'."\t";
 								$display .= '<strong class="'.$class.' screen-name"><a href="https://twitter.com/'.$screen_name.'">'.$screen_name.'</a></strong>'."\t";
 								$display .= '<span class="'.$class.' date"><a href="https://twitter.com/'.$screen_name.'/statuses/'.$id_str.'">'.date( $date_format, strtotime($date) ).'</a>'."\n";	
 								$display .= '<span class="'.$class.' text">'.$text.'</span>'."\n";
+								$display .= apply_filters('the_media_show', $pic_twitter);
 								$display .= '<span class="'.$class.' reply"><a class="Icon Icon--reply" href="https://twitter.com/intent/tweet?in_reply_to='.$id_str.'">'. __( 'Reply', $this->textdomain ) .'</a></span>'."\t";
 								$display .= '<span class="'.$class.' retweet"><a class="Icon Icon--retweet" href="https://twitter.com/intent/retweet?tweet_id='.$id_str.'">'. __( 'Retweet', $this->textdomain ) .'</a> </span>'."\t";
 								$display .= '<span class="'.$class.' favorite"><a class="Icon Icon--favorite" href="https://twitter.com/intent/favorite?tweet_id='.$id_str.'">'. __( 'Favorite', $this->textdomain ) .'</a></span>'."\t";
@@ -339,8 +357,7 @@ if (!class_exists('TokenToMe'))
 						$display = __('This request does not exist or is not taken into account with the display_infos() method !', $this->textdomain);
 					}
 
-				}
-			else 
+				} else 
 				{
 				$this->delete_cache();
 				$display = $data;

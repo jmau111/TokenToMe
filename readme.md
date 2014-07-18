@@ -19,7 +19,7 @@ Class that allows you to grab data from Twitter in WordPress
 	
 The fourth param should give you the ability to add additional param according to the Twitter's API documentation.
 
-There's a cache (the very last param for the class), 15 minutes by default.
+There's a cache, 15 minutes by default, you can customize it.
 
 ### Save your time
 
@@ -48,6 +48,7 @@ If you found something wrong, if you want to add stuffs, please fork the <a href
 
 # 1.3
 * Fix notices when no settings or wrong settings are set
+* Add dsiplay media option
 
 # 1.2
 * Add checking method

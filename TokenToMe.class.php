@@ -29,11 +29,11 @@ if (!class_exists('TokenToMe'))
 			$Display_media = false
 		)
 			{
-			$this->consumer_key = $Consumer_key;
-			$this->consumer_secret = $Consumer_secret;
+			$this->consumer_key = (string) $Consumer_key;
+			$this->consumer_secret = (string) $Consumer_secret;
 			$this->request = (string) $Request;
 			$this->params = (array) $Params;
-			$this->cache = $Cache;
+			$this->cache = (int) $Cache;
 			$this->display_media = (bool) $Display_media;
 
 			if (   !$Consumer_key 

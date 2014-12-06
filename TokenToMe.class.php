@@ -146,7 +146,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 				$obj = json_decode( wp_remote_retrieve_body( $call ) );
 			} else {
 				$this->delete_cache();
-				$obj = $this->check_http_code( $call['response']['code'] );
+				$obj = $this->check_http_code( wp_remote_retrieve_response_code( $call ) );
 			}
 
 			return apply_filters( 'the_twitter_object', $obj );

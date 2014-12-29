@@ -50,7 +50,6 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 			$credentials = $this->consumer_key . ':' . $this->consumer_secret;
 			$auth        = base64_encode( $credentials );
 			$args        = array(
-				'method'      => 'POST',
 				'httpversion' => '1.1',
 				'headers'     => array(
 					'Authorization' => 'Basic ' . $auth,

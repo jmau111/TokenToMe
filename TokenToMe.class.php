@@ -73,7 +73,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 				return __( 'Access granted ^^ !', $this->textdomain );
 			} else {
 
-				return $this->check_http_code( $call['response']['code'] );
+				return $this->check_http_code( wp_remote_retrieve_response_code( $call ) );
 
 			}
 

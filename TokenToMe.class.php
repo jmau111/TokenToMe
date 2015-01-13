@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: TokenToMe
-Description: Get access token from Twitter
+Description: WordPress class to get access token from Twitter and more :)
 Author: Julien Maury
 Author URI: https://tweetpressfr.github.io
 Version 1.4

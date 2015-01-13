@@ -4,7 +4,7 @@ Plugin Name: TokenToMe
 Description: Get access token from Twitter
 Author: Julien Maury
 Author URI: https://tweetpressfr.github.io
-Version 1.3
+Version 1.4
 */
 
 if ( ! class_exists( 'TokenToMe' ) ) {
@@ -160,11 +160,11 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 
 			$set_cache = isset( $this->params ) ? implode( ',', $this->params ) . $this->request : $this->request;
 
-			$cached = get_site_transient( md5( $set_cache ) );
+			$cached = unserialize( base64_decode( get_site_transient( md5( $set_cache ) ) ) );// tips with base64_decode props to raherian
 
 			if ( false === $cached ) {
 				$cached = $this->get_obj();
-				set_site_transient( md5( $set_cache ), $cached, $this->cache );//900 by default because Twitter says every 15 minutes in its doc
+				set_site_transient( md5( $set_cache ), base64_encode( serialize( $cached ) ), $this->cache );//900 by default because Twitter says every 15 minutes in its doc
 			}
 
 			return $cached;

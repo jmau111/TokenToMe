@@ -15,7 +15,7 @@ Class that allows you to grab data from Twitter in WordPress
 
     $init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array('screen_name' => 'TweetPressFr') );
     $infos = $init->get_infos();
-	var_dump($infos);
+    var_dump($infos);
 	
 The fourth param should give you the ability to add additional param according to the Twitter's API documentation.
 
@@ -45,6 +45,9 @@ If you found something wrong, if you want to add stuffs, please fork the <a href
 
 
 ## Changelog 
+
+# 1.4
+* fix mysql bugs with emoji => base64encode, thanks for the update raherian :)
 
 # 1.3
 * Fix notices when no settings or wrong settings are set

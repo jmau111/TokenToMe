@@ -15,7 +15,6 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 		public $params = array();
 		public $cache;
 		public $display_media;
-		public $textdomain = 'ttm';
 
 		public function __construct(
 			$Consumer_key = false,
@@ -37,7 +36,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 			     || ! $Request
 			     || $Cache < 900
 			) {
-				return __( 'The class is not set properly!', $this->textdomain );
+				return __( 'The class is not set properly!', 'ttm' );
 			}
 
 		}
@@ -70,7 +69,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 				$keys = json_decode( wp_remote_retrieve_body( $call ) );
 				update_option( md5( $this->consumer_key . $this->consumer_secret ) . '_twitter_access_token', $keys->access_token );
 
-				return __( 'Access granted ^^ !', $this->textdomain );
+				return __( 'Access granted ^^ !', 'ttm' );
 			} else {
 
 				return $this->check_http_code( wp_remote_retrieve_response_code( $call ) );
@@ -93,21 +92,21 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 				case '403':
 				case '404':
 				case '406':
-					$error = '<div class="error">' . __( 'Your credentials might be unset or incorrect or username is wrong. In any case this error is not due to Twitter API.', $this->textdomain ) . '</div>';
+					$error = '<div class="error">' . __( 'Your credentials might be unset or incorrect or username is wrong. In any case this error is not due to Twitter API.', 'ttm' ) . '</div>';
 					break;
 
 				case '429':
-					$error = '<div class="error">' . __( 'Rate limits are exceed!', $this->textdomain ) . '</div>';
+					$error = '<div class="error">' . __( 'Rate limits are exceed!', 'ttm' ) . '</div>';
 					break;
 
 				case '500':
 				case '502':
 				case '503':
-					$error = '<div class="error">' . __( 'Twitter is overwhelmed or something bad happened with its API.', $this->textdomain ) . '</div>';
+					$error = '<div class="error">' . __( 'Twitter is overwhelmed or something bad happened with its API.', 'ttm' ) . '</div>';
 					break;
 
 				default:
-					$error = '<div class="error">' . __( 'Something is wrong or missing. ', $this->textdomain ) . '</div>';
+					$error = '<div class="error">' . __( 'Something is wrong or missing. ', 'ttm' ) . '</div>';
 
 			}
 
@@ -207,7 +206,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 				// let's extract the usernames from the entities object
 				foreach ( $tweet->entities->user_mentions as $user_mentions ) {
 					$username    = '@' . $user_mentions->screen_name;
-					$replacement = '<a href="http://twitter.com/' . $user_mentions->screen_name . '" rel="external" title="' . $user_mentions->name . '' . __( 'on Twitter', $this->textdomain ) . '">' . $username . '</a>';
+					$replacement = '<a href="http://twitter.com/' . $user_mentions->screen_name . '" rel="external" title="' . $user_mentions->name . '' . __( 'on Twitter', 'ttm' ) . '">' . $username . '</a>';
 					$format      = str_ireplace( $username, $replacement, $format );
 				}
 
@@ -241,12 +240,12 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 					case 'users/show':
 						$display = '<img src="' . $data->profile_image_url . '" width="36" height="36" alt="@.' . $data->screen_name . '" />';
 						$display .= '<ul class="ttm-container">';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'name', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show user-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->name . '</a></span></li>';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'screen name', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show screen-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->screen_name . '</a></span></li>';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'tweets', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show tweets-count">' . $data->statuses_count . '</span></li>';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'followers', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show followers-count">' . $data->followers_count . '</span></li>';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'followings', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show followings-count">' . $data->friends_count . '</span></li>';
-						$display .= '<li><span class="ttm-users-show label">' . __( 'favorites', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show favorites-count">' . $data->favourites_count . '</span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show user-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->name . '</a></span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'screen name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show screen-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->screen_name . '</a></span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'tweets', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show tweets-count">' . $data->statuses_count . '</span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'followers', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show followers-count">' . $data->followers_count . '</span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'followings', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show followings-count">' . $data->friends_count . '</span></li>';
+						$display .= '<li><span class="ttm-users-show label">' . __( 'favorites', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show favorites-count">' . $data->favourites_count . '</span></li>';
 						$display .= '</ul>';
 						break;
 
@@ -261,12 +260,12 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 							$display .= '<li class="ttm-users-lookup">';
 							$display .= '<img src="' . $data[ $i - 1 ]->profile_image_url . '" width="36" height="36" alt="@' . $data[ $i - 1 ]->screen_name . '" />';
 							$display .= '<ul>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'name', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show user-name"><a href="https://twitter.com/' . $data[ $i - 1 ]->screen_name . '">' . $data[ $i - 1 ]->name . '</a></span></li>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'screen name', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show screen-name"><a href="https://twitter.com/' . $data[ $i - 1 ]->screen_name . '">' . $data[ $i - 1 ]->screen_name . '</a></span></li>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'tweets', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show tweets-count">' . $data[ $i - 1 ]->statuses_count . '</span></li>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'followers', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show followers-count">' . $data[ $i - 1 ]->followers_count . '</span></li>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'followings', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show followings-count">' . $data[ $i - 1 ]->friends_count . '</span></li>';
-							$display .= '<li><span class="ttm-users-lookup label">' . __( 'favorites', $this->textdomain ) . '</span>' . ' ' . '<span class="ttm-users-show favorites-count">' . $data[ $i - 1 ]->favourites_count . '</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show user-name"><a href="https://twitter.com/' . $data[ $i - 1 ]->screen_name . '">' . $data[ $i - 1 ]->name . '</a></span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'screen name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show screen-name"><a href="https://twitter.com/' . $data[ $i - 1 ]->screen_name . '">' . $data[ $i - 1 ]->screen_name . '</a></span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'tweets', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show tweets-count">' . $data[ $i - 1 ]->statuses_count . '</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'followers', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show followers-count">' . $data[ $i - 1 ]->followers_count . '</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'followings', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show followings-count">' . $data[ $i - 1 ]->friends_count . '</span></li>';
+							$display .= '<li><span class="ttm-users-lookup label">' . __( 'favorites', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show favorites-count">' . $data[ $i - 1 ]->favourites_count . '</span></li>';
 							$display .= '</ul>';
 							$display .= '</li>';
 
@@ -314,9 +313,9 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 								$display .= '<span class="' . $class . ' date"><a href="https://twitter.com/' . $screen_name . '/statuses/' . $id_str . '">' . date( $date_format, strtotime( $date ) ) . '</a>' . "\n";
 								$display .= '<span class="' . $class . ' text">' . $text . '</span>' . "\n";
 								$display .= apply_filters( 'the_media_show', $pic_twitter );
-								$display .= '<span class="' . $class . ' reply"><a class="Icon Icon--reply" href="https://twitter.com/intent/tweet?in_reply_to=' . $id_str . '">' . __( 'Reply', $this->textdomain ) . '</a></span>' . "\t";
-								$display .= '<span class="' . $class . ' retweet"><a class="Icon Icon--retweet" href="https://twitter.com/intent/retweet?tweet_id=' . $id_str . '">' . __( 'Retweet', $this->textdomain ) . '</a> </span>' . "\t";
-								$display .= '<span class="' . $class . ' favorite"><a class="Icon Icon--favorite" href="https://twitter.com/intent/favorite?tweet_id=' . $id_str . '">' . __( 'Favorite', $this->textdomain ) . '</a></span>' . "\t";
+								$display .= '<span class="' . $class . ' reply"><a class="Icon Icon--reply" href="https://twitter.com/intent/tweet?in_reply_to=' . $id_str . '">' . __( 'Reply', 'ttm' ) . '</a></span>' . "\t";
+								$display .= '<span class="' . $class . ' retweet"><a class="Icon Icon--retweet" href="https://twitter.com/intent/retweet?tweet_id=' . $id_str . '">' . __( 'Retweet', 'ttm' ) . '</a> </span>' . "\t";
+								$display .= '<span class="' . $class . ' favorite"><a class="Icon Icon--favorite" href="https://twitter.com/intent/favorite?tweet_id=' . $id_str . '">' . __( 'Favorite', 'ttm' ) . '</a></span>' . "\t";
 								$display .= '</li>';
 
 								$i ++;
@@ -327,7 +326,7 @@ if ( ! class_exists( 'TokenToMe' ) ) {
 
 					default:
 						$this->delete_cache();
-						$display = __( 'This request does not exist or is not taken into account with the display_infos() method !', $this->textdomain );
+						$display = __( 'This request does not exist or is not taken into account with the display_infos() method !', 'ttm' );
 				}
 
 			} else {

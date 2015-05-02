@@ -13,7 +13,7 @@ consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Ge
 
 Class that allows you to grab data from Twitter in WordPress
 
-    $init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array('screen_name' => 'TweetPressFr') );
+    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array('screen_name' => 'TweetPressFr') );
     $infos = $init->get_infos();
     var_dump($infos);
 	
@@ -27,14 +27,14 @@ There's a cache, 15 minutes by default, you can customize it.
 
 Here is an example with the `display_infos()` method and the request `GET statuses/user_timeline` :
 	
-	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', array('count' => 20, 'screen_name' => 'TweetPressFr') );
+	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', array('count' => 20, 'screen_name' => 'TweetPressFr') );
 	$infos = $init->display_infos();
 
 	echo $infos;
 	
 **GET users/lookup**
 
-	$init =  new TokenToMe('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => 'TweetPressFr,twitter,support') );
+	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => 'TweetPressFr,twitter,support') );
 	$infos = $init->display_infos();
 
 	echo $infos;
@@ -44,7 +44,10 @@ Here is an example with the `display_infos()` method and the request `GET status
 If you found something wrong, if you want to add stuffs, please fork the <a href="https://github.com/TweetPressFr/TokenToMe/tree/trunk">trunk version</a> not the master. Thanks.
 
 
-## Changelog 
+## Changelog
+
+# 1.5
+* namespace, code standards
 
 # 1.4
 * fix mysql bugs with emoji => base64encode, thanks for the update raherian :)

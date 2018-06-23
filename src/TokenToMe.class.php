@@ -5,7 +5,6 @@ namespace TokenToMe;
 Plugin Name: TokenToMe
 Description: WordPress class to get access token from Twitter and more :)
 Author: Julien Maury
-Author: URI: https://tweetpressfr.github.io
 Version: 1.6
 Licence: GPLv3
 */

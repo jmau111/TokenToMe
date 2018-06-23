@@ -4,8 +4,9 @@ Get access token and more from Twitter (in WordPress).
 
 ## Requirements 
 
-consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Get yours !</a>
-
+* consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Get yours !</a>
+* PHP 5.4 at least
+* Please remember to follow [style requirements](https://developer.twitter.com/en/developer-terms/display-requirements.html) by Twitter when using this library
 
 ## Description 
 
@@ -13,7 +14,7 @@ consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Ge
 
 Class that allows you to grab data from Twitter in WordPress
 
-    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', array('screen_name' => 'TweetPressFr') );
+    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', ['screen_name' => 'TweetPressFr'] );
     $infos = $init->get_infos();
     var_dump($infos);
 	
@@ -27,14 +28,14 @@ There's a cache, 15 minutes by default, you can customize it.
 
 Here is an example with the `display_infos()` method and the request `GET statuses/user_timeline` :
 	
-	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', array('count' => 20, 'screen_name' => 'TweetPressFr') );
+	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', ['count' => 20, 'screen_name' => 'TweetPressFr'] );
 	$infos = $init->display_infos();
 
 	echo $infos;
 	
 **GET users/lookup**
 
-	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', array('screen_name' => 'TweetPressFr,twitter,support') );
+	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', ['screen_name' => 'jmau111,twitter'] );
 	$infos = $init->display_infos();
 
 	echo $infos;
@@ -46,6 +47,13 @@ If you found something wrong, if you want to add stuffs, please fork the <a href
 
 ## Changelog
 
+# 1.6
+* refactor and upgrade
+* delete useless parts of code and comments
+* requirements min PHP 5.4
+* fix some warnings and notices in edge cases
+* please folks remember to follow [style requirements](https://developer.twitter.com/en/developer-terms/display-requirements.html) when using this library
+
 # 1.5
 * namespace, code standards
 
@@ -54,7 +62,7 @@ If you found something wrong, if you want to add stuffs, please fork the <a href
 
 # 1.3
 * Fix notices when no settings or wrong settings are set
-* Add dsiplay media option
+* Add display media option
 
 # 1.2
 * Add checking method

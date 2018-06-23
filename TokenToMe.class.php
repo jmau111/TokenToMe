@@ -1,11 +1,12 @@
 <?php
+
 namespace TokenToMe;
 /*
 Plugin Name: TokenToMe
 Description: WordPress class to get access token from Twitter and more :)
 Author: Julien Maury
 Author: URI: https://tweetpressfr.github.io
-Version: 1.5
+Version: 1.6
 Licence: GPLv3
 */
 
@@ -13,18 +14,13 @@ class WP_Twitter_Oauth {
 	public $consumer_key;
 	protected $consumer_secret;
 	public $request;
-	public $params = array();
+	public $params = [];
 	public $cache;
 	public $display_media;
 
-	public function __construct(
-		$Consumer_key = false,
-		$Consumer_secret = false,
-		$Request = 'users/show',
-		$Params = array(),
-		$Cache = 900,
-		$Display_media = false
-	) {
+	public function __construct( $Consumer_key = false, $Consumer_secret = false, $Request = 'users/show', $Params = [],
+		$Cache = 900, $Display_media = false ) {
+
 		$this->consumer_key    = (string) $Consumer_key;
 		$this->consumer_secret = (string) $Consumer_secret;
 		$this->request         = (string) $Request;
@@ -35,55 +31,58 @@ class WP_Twitter_Oauth {
 		if ( ! $Consumer_key
 		     || ! $Consumer_secret
 		     || ! $Request
-		     || $Cache < 900
 		) {
 			return __( 'The class is not set properly!', 'ttm' );
 		}
 
+		if ( $Cache < 900 ) {
+			return __( 'The cache duration is very low, please set at least 900s.', 'ttm' );
+		}
 	}
 
-	/*
-	* Get token from Twitter API 1.1
-	* returns $access_token
-	*/
+	/**
+	 * @return string
+	 * @author Julien Maury
+	 */
 	protected function get_access_token() {
 		$credentials = $this->consumer_key . ':' . $this->consumer_secret;
 		$auth        = base64_encode( $credentials );
-		$args        = array(
+		$args        = [
 			'httpversion' => '1.1',
-			'headers'     => array(
+			'headers'     => [
 				'Authorization' => 'Basic ' . $auth,
 				'Content-Type'  => 'application/x-www-form-urlencoded;charset=UTF-8',
-
-				// !important
-
-			),
-			'body'        => array(
+			],
+			'body'        => [
 				'grant_type' => 'client_credentials',
-			),
-		);
+			],
+		];
 
 		$call = wp_remote_post( 'https://api.twitter.com/oauth2/token', $args );
 
-		// need to know what's going on before proceeding
-		if ( 200 == wp_remote_retrieve_response_code( $call ) ) {
-			$keys = json_decode( wp_remote_retrieve_body( $call ) );
-			update_option( md5( $this->consumer_key . $this->consumer_secret ) . '_twitter_access_token', $keys->access_token );
-
-			return __( 'Access granted ^^ !', 'ttm' );
-		} else {
-
+		if ( is_wp_error( $call ) || 200 !== wp_remote_retrieve_response_code( $call ) ) {
 			return $this->check_http_code( wp_remote_retrieve_response_code( $call ) );
-
 		}
 
+		$body = wp_remote_retrieve_body( $call );
+
+		if ( empty( $body ) ) {
+			return __( 'No body or incorrect parameter given', 'ttm' );
+		}
+
+		$keys = json_decode( $body );
+		update_option( md5( $this->consumer_key . $this->consumer_secret ) . '_twitter_access_token', $keys->access_token );
+
+		return __( 'Access granted ^^ !', 'ttm' );
 	}
 
 
-	/*
-	* Full check
-	* returns $error
-	*/
+	/**
+	 * @param $http_code
+	 *
+	 * @return string
+	 * @author Julien Maury
+	 */
 	protected function check_http_code( $http_code ) {
 
 		switch ( $http_code ) {
@@ -93,7 +92,7 @@ class WP_Twitter_Oauth {
 			case '403':
 			case '404':
 			case '406':
-				$error = '<div class="error">' . __( 'Your credentials might be unset or incorrect or username is wrong. In any case this error is not due to Twitter API.', 'ttm' ) . '</div>';
+				$error = '<div class="error">' . __( 'Your credentials might be unset or incorrect or username or request is wrong. In any case this error is not due to Twitter API.', 'ttm' ) . '</div>';
 				break;
 
 			case '429':
@@ -115,25 +114,25 @@ class WP_Twitter_Oauth {
 
 	}
 
-	/*
-	* Get object from Twitter API 1.1 with the $access_token
-	* returns $obj from Twitter
-	*/
+	/**
+	 * @return mixed
+	 * @author Julien Maury
+	 */
 	protected function get_obj() {
 		$this->get_access_token();
 		$access_token = get_option( md5( $this->consumer_key . $this->consumer_secret ) . '_twitter_access_token' );
 
-		$args = array(
+		$args = [
 			'httpversion' => '1.1',
 			'timeout'     => 120,
-			'headers'     => array(
+			'headers'     => [
 				'Authorization' => "Bearer {$access_token}",
-			)
-		);
+			],
+		];
 
-		$defaults = array(
+		$defaults = [
 			'count' => 1,
-		);
+		];
 
 		$q     = "https://api.twitter.com/1.1/{$this->request}.json";
 		$sets  = wp_parse_args( $this->params, $defaults );
@@ -141,7 +140,7 @@ class WP_Twitter_Oauth {
 
 		$call = wp_remote_get( $query, $args );
 
-		if ( 200 == wp_remote_retrieve_response_code( $call ) ) {
+		if ( ! is_wp_error( $call ) && 200 === wp_remote_retrieve_response_code( $call ) ) {
 			$obj = json_decode( wp_remote_retrieve_body( $call ) );
 		} else {
 			$this->delete_cache();
@@ -152,17 +151,17 @@ class WP_Twitter_Oauth {
 	}
 
 
-	/*
-	* Get infos but make sure there's some cache
-	* returns (object) $infos from Twitter
-	*/
+	/**
+	 * @return mixed
+	 * @author Julien Maury
+	 */
 	public function get_infos() {
 
-		$set_cache = isset( $this->params ) ? implode( ',', $this->params ) . $this->request : $this->request;
+		$set_cache = ! empty( $this->params ) ? implode( ',', $this->params ) . $this->request : $this->request;
 
-		$cached = unserialize( base64_decode( get_site_transient( md5( $set_cache ) ) ) );// tips with base64_decode props to raherian
+		$cached = unserialize( base64_decode( get_site_transient( md5( $set_cache ) ) ) );// tips with base64_decode props to @raherian
 
-		if ( false === $cached ) {
+		if ( false === (bool) $cached ) {
 			$cached = $this->get_obj();
 			set_site_transient( md5( $set_cache ), base64_encode( serialize( $cached ) ), $this->cache );//900 by default because Twitter says every 15 minutes in its doc
 		}
@@ -170,19 +169,20 @@ class WP_Twitter_Oauth {
 		return $cached;
 	}
 
-	/*
-	* Format obj from Twitter
-	* returns $format
-	*/
+	/**
+	 * @param $raw_text
+	 * @param null $tweet
+	 *
+	 * @return mixed|null|string|string[]
+	 * @author Julien Maury
+	 */
 	public function jc_twitter_format( $raw_text, $tweet = null ) {
-		// first set output to the value we received when calling this function
-		$format = $raw_text;
 
 		// create xhtml safe text (mostly to be safe of ampersands)
 		$format = htmlentities( html_entity_decode( $raw_text, ENT_NOQUOTES, 'UTF-8' ), ENT_NOQUOTES, 'UTF-8' );
 
 		// parse urls
-		if ( $tweet == null ) {
+		if ( empty( $tweet ) ) {
 			// for regular strings, just create <a> tags for each url
 			$pattern     = '/([A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&\?\/.=]+)/i';
 			$replacement = '<a href="${1}" rel="external">${1}</a>';
@@ -225,21 +225,26 @@ class WP_Twitter_Oauth {
 	}
 
 
-	/*
-	* Allows you to do what you want with display
-	* returns $display
-	*/
+	/**
+	 * @return mixed
+	 * @author Julien Maury
+	 */
 	public function display_infos() {
-		$data    = $this->get_infos();
-		$request = $this->request;
-		$i       = 1;
+		$data = $this->get_infos();
+		$i    = 1;
 
 		if ( ! is_null( $data ) && ! is_string( $data ) ) {
 
-			switch ( $request ) {
+			switch ( $this->request ) {
 
 				case 'users/show':
-					$display = '<img src="' . $data->profile_image_url . '" width="36" height="36" alt="@.' . $data->screen_name . '" />';
+
+					$display = '';
+
+					if ( ! empty( $data->profile_image_url ) && ! empty( $data->screen_name ) ) {
+						$display = '<img src="' . $data->profile_image_url . '" width="36" height="36" alt="@.' . $data->screen_name . '" />';
+					}
+
 					$display .= '<ul class="ttm-container">';
 					$display .= '<li><span class="ttm-users-show label">' . __( 'name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show user-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->name . '</a></span></li>';
 					$display .= '<li><span class="ttm-users-show label">' . __( 'screen name', 'ttm' ) . '</span>' . ' ' . '<span class="ttm-users-show screen-name"><a href="https://twitter.com/' . $data->screen_name . '">' . $data->screen_name . '</a></span></li>';
@@ -251,7 +256,7 @@ class WP_Twitter_Oauth {
 					break;
 
 				case 'users/lookup':
-					$num   = isset( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
+					$num   = ! empty( $this->params['screen_name'] ) ? $this->params['screen_name'] : 1;
 					$count = count( explode( ',', $num ), 1 );// count() returns 1 if $num is not an array or an object
 
 					$display = '<ul class="ttm-container">';
@@ -277,7 +282,7 @@ class WP_Twitter_Oauth {
 
 				case 'statuses/user_timeline':
 					$display = '<ul class="ttm-container">';
-					$count   = isset( $this->params['count'] ) ? $this->params['count'] : 1;
+					$count   = ! empty( $this->params['count'] ) ? $this->params['count'] : 1;
 
 					switch ( $this->request ) {
 
@@ -290,7 +295,7 @@ class WP_Twitter_Oauth {
 					}
 
 					while ( $i <= $count ) {
-						if ( isset( $data[ $i - 1 ] ) ) {
+						if ( ! empty( $data[ $i - 1 ] ) ) {
 							$text              = $this->jc_twitter_format( $data[ $i - 1 ]->text, $data[ $i - 1 ] );
 							$id_str            = $data[ $i - 1 ]->id_str;
 							$screen_name       = $data[ $i - 1 ]->user->screen_name;
@@ -338,13 +343,12 @@ class WP_Twitter_Oauth {
 	}
 
 
-	/*
-	* Delete cache
-	* In case you need to delete transient
-	*/
+	/**
+	 * @author Julien Maury
+	 */
 	protected function delete_cache() {
-		$set_cache = isset( $this->params ) ? implode( ',', $this->params ) . $this->request : $this->request;
-		delete_site_transient( md5( $set_cache ) );
+		$set_cache = ! empty( $this->params ) ? implode( ',', $this->params ) . $this->request : $this->request;
+		delete_site_transient( md5( $set_cache ) ); // md5 cause the wp functions do not support a lot of chars which is great by the way.
 	}
 
 }

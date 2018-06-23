@@ -1,17 +1,17 @@
 {
-  "name": "tweetpressfr/TokenToMe",
+  "name": "jmau/TokenToMe",
   "keywords": [
     "WordPress",
     "twitter",
     "API",
     "tweets"
   ],
-  "homepage": "https://github.com/TweetPressFr/TokenToMe",
+  "homepage": "https://github.com/jmau111/TokenToMe",
   "license": "GPL-2.0+",
   "authors": [
     {
-      "name": "TweetPressFr",
-      "email": "contact@tweetpress.fr"
+      "name": "jmau111",
+      "email": "contact@julien-maury.com"
     }
   ],
   "type": "library",

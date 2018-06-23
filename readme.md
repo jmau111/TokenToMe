@@ -14,7 +14,7 @@ Get access token and more from Twitter (in WordPress).
 
 Class that allows you to grab data from Twitter in WordPress
 
-    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', ['screen_name' => 'TweetPressFr'] );
+    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', ['screen_name' => 'jmau111'] );
     $infos = $init->get_infos();
     var_dump($infos);
 	
@@ -28,7 +28,7 @@ There's a cache, 15 minutes by default, you can customize it.
 
 Here is an example with the `display_infos()` method and the request `GET statuses/user_timeline` :
 	
-	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', ['count' => 20, 'screen_name' => 'TweetPressFr'] );
+	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', ['count' => 20, 'screen_name' => 'jmau111'] );
 	$infos = $init->display_infos();
 
 	echo $infos;
@@ -42,7 +42,7 @@ Here is an example with the `display_infos()` method and the request `GET status
 
 ### Fork this class
 
-If you found something wrong, if you want to add stuffs, please fork the <a href="https://github.com/TweetPressFr/TokenToMe/tree/trunk">trunk version</a> not the master. Thanks.
+If you found something wrong, if you want to add stuffs, please fork the <a href="https://github.com/jmau111/TokenToMe/tree/trunk">trunk version</a> not the master. Thanks.
 
 
 ## Changelog

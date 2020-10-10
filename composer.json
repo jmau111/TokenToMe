@@ -11,14 +11,11 @@
   "authors": [
     {
       "name": "jmau111",
-      "email": "contact@julien-maury.com"
+      "email": "https://blog.julien-maury.com/en/contact"
     }
   ],
   "type": "library",
   "description": "Wrapper to get token ands more from Twitter API.",
-  "require": {
-    "composer/installers": "~1.0"
-  },
   "autoload": {
     "classmap": [
       "src/"

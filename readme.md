@@ -4,19 +4,61 @@ Get access token and more from Twitter (in WordPress).
 
 ## Requirements 
 
-* consumer key and consumer secret : <a href="https://apps.twitter.com/app/new">Get yours !</a>
-* PHP 5.4 at least
-* Please remember to follow [style requirements](https://developer.twitter.com/en/developer-terms/display-requirements.html) by Twitter when using this library
+* Go get your token here : [https://developer.twitter.com/content/developer-twitter/en/apply-for-access](https://developer.twitter.com/content/developer-twitter/en/apply-for-access)
+* Please remember to follow [style requirements](https://developer.twitter.com/en/developer-terms/display-requirements) by Twitter when using this library
 
 ## Description 
 
+This cass allows you to grab data from Twitter in WordPress.
+
+### You need a bearer token to use this tool
+
+Go get your token here : [https://developer.twitter.com/content/developer-twitter/en/apply-for-access](https://developer.twitter.com/content/developer-twitter/en/apply-for-access).
+
+Read the documentation carefully, you cannot get some data if your token is not correctly configured. Make sure you provide all details to the Twitter team. Otherwise you app could be either rejected or useless.
+
+### New version of the API and breaking changes
+
+All details here [https://developer.twitter.com/en/docs/getting-started](https://developer.twitter.com/en/docs/getting-started). 
+This API change is major, so is the new version of `WP_Twitter_Oauth`.
+
+It's quite experimental, so please do not hesitate to report any bugs or suggestion. Issues are meant to that.
+
+### Misusage protection
+
+There are some protections to prevent the most common misusages of the Twitter API but it's not bullet proof, it's just a tool...
+
 ### Get infos as object 
 
-Class that allows you to grab data from Twitter in WordPress
+```php
+$init =  new \TokenToMe\WP_Twitter_Oauth(
+	'YOUR_BEARER_TOKEN', 
+	'tweets/recent/search',
+	[
+		'from' => 'YOUR_USERNAME',
+		'max_results' => 10
+	],
+	901,
+	true, // display media attached
+	true // debug mode, no cache
+);
 
-    $init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/show', ['screen_name' => 'jmau111'] );
-    $infos = $init->get_infos();
-    var_dump($infos);
+$init2 =  new \TokenToMe\WP_Twitter_Oauth(
+	'YOUR_BEARER_TOKEN', 
+	'users/by',
+	[
+		'usernames' => 'rihanna, twitterapi, katiemelua',
+	],
+	901,
+	true, // display media attached
+	true // debug mode, no cache
+);
+
+echo '<pre>';
+print_r( $init->get_infos() );
+print_r( $init2->get_infos() );
+echo '</pre>';
+```
 	
 The fourth param should give you the ability to add additional param according to the Twitter's API documentation.
 
@@ -24,56 +66,51 @@ There's a cache, 15 minutes by default, you can customize it.
 
 ### Save your time
 
-**GET statuses/user_timeline**
+**GET /v2/users/by**
 
-Here is an example with the `display_infos()` method and the request `GET statuses/user_timeline` :
+Here is an example with the `display_infos()` method and the request `GET /v2/users/by` :
 	
-	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'statuses/user_timeline', ['count' => 20, 'screen_name' => 'jmau111'] );
-	$infos = $init->display_infos();
+```php
+$init =  new \TokenToMe\WP_Twitter_Oauth(
+	'YOUR_BEARER_TOKEN', 
+	'tweets/search/recent',
+	[
+		'from' => 'YOUR_USERNAME',
+		'max_results' => 10
+	],
+	3600, // set cache for 1 hour
+	true // display media attached
+);
 
-	echo $infos;
+echo $init->display_infos();
+```
 	
-**GET users/lookup**
+**GET /v2/tweets/search/recent**
 
-	$init =  new TokenToMe\WP_Twitter_Oauth('CONSUMER_KEY', 'CONSUMER_SECRET', 'users/lookup', ['screen_name' => 'jmau111,twitter'] );
-	$infos = $init->display_infos();
+```php
+$init2 =  new \TokenToMe\WP_Twitter_Oauth(
+	'YOUR_BEARER_TOKEN', 
+	'users/by',
+	[
+		'usernames' => 'rihanna, twitterapi, katiemelua',
+	],
+	3600, // set cache for 1 hour
+	true // display media attached
+);
 
-	echo $infos;
+echo $init2->display_infos();
+```
 
-### Fork this class
+![](/assets/img/screen_users_by.jpg?raw=true)
 
-If you found something wrong, if you want to add stuffs, please fork the <a href="https://github.com/jmau111/TokenToMe/tree/trunk">trunk version</a> not the master. Thanks.
+### Forking this class
 
+If you found something wrong, if you want to add stuffs, please contribute with a pull request. Thanks.
 
 ## Changelog
 
-# 1.6
-* refactor and upgrade
-* delete useless parts of code and comments
-* requirements min PHP 5.4
-* fix some warnings and notices in edge cases
-* please folks remember to follow [style requirements](https://developer.twitter.com/en/developer-terms/display-requirements.html) when using this library
-
-# 1.5
-* namespace, code standards
-
-# 1.4
-* fix mysql bugs with emoji => base64encode, thanks for the update raherian :)
-
-# 1.3
-* Fix notices when no settings or wrong settings are set
-* Add display media option
-
-# 1.2
-* Add checking method
-* Add display method
-* Add display for users/show, users/lookup, statuses/user_timeline, search/tweets
-* Access_token as option
-* Delete screen name param (could be blocking for other requests)
+# 2.0
+* Twitter API v2
 
 # 1.1
-* Fix some bugs in case class is not set properly
-* add method to Twitter's object according to any request
-
-# 1.0
-* First commit
+* Twitter API v1.1

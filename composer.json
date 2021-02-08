@@ -1,0 +1,24 @@
+{
+  "name": "jmau/TokenToMe",
+  "keywords": [
+    "WordPress",
+    "twitter",
+    "API",
+    "tweets"
+  ],
+  "homepage": "https://github.com/jmau111/TokenToMe",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "jmau111",
+      "email": "https://blog.julien-maury.com/en/contact"
+    }
+  ],
+  "type": "library",
+  "description": "Wrapper to get token ands more from Twitter API.",
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}
